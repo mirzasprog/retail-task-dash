@@ -425,6 +425,94 @@ export type Database = {
           },
         ]
       }
+      task_scheduling_rules: {
+        Row: {
+          active: boolean | null
+          category: string
+          created_at: string
+          id: string
+          name: string
+          region_id: string | null
+          schedule_pattern: Json
+          store_group: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          region_id?: string | null
+          schedule_pattern: Json
+          store_group?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          region_id?: string | null
+          schedule_pattern?: Json
+          store_group?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_scheduling_rules_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_sla_violations: {
+        Row: {
+          created_at: string
+          hours_delayed: number
+          id: string
+          notified_at: string | null
+          notified_users: string[] | null
+          resolved_at: string | null
+          severity: string
+          task_id: string
+          violation_type: string
+        }
+        Insert: {
+          created_at?: string
+          hours_delayed: number
+          id?: string
+          notified_at?: string | null
+          notified_users?: string[] | null
+          resolved_at?: string | null
+          severity: string
+          task_id: string
+          violation_type: string
+        }
+        Update: {
+          created_at?: string
+          hours_delayed?: number
+          id?: string
+          notified_at?: string | null
+          notified_users?: string[] | null
+          resolved_at?: string | null
+          severity?: string
+          task_id?: string
+          violation_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_sla_violations_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_templates: {
         Row: {
           category: string | null
@@ -562,6 +650,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_task_sla_violations: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_idempotency_keys: {
         Args: Record<PropertyKey, never>
         Returns: undefined
