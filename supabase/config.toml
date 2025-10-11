@@ -1,1 +1,7 @@
 project_id = "piwellpwjpkqwroyozkq"
+
+[functions.daily-task-generator]
+verify_jwt = false
+
+[functions.kpi-aggregator]
+verify_jwt = false
