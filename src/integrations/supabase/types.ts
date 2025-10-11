@@ -519,6 +519,8 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          dow: string[] | null
+          frequency: string
           id: string
           priority: Database["public"]["Enums"]["task_priority"]
           requires_gps: boolean | null
@@ -531,6 +533,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          dow?: string[] | null
+          frequency?: string
           id?: string
           priority?: Database["public"]["Enums"]["task_priority"]
           requires_gps?: boolean | null
@@ -543,6 +547,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          dow?: string[] | null
+          frequency?: string
           id?: string
           priority?: Database["public"]["Enums"]["task_priority"]
           requires_gps?: boolean | null
@@ -671,6 +677,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      should_create_task_today: {
+        Args: { template_dow: string[]; template_frequency: string }
         Returns: boolean
       }
     }

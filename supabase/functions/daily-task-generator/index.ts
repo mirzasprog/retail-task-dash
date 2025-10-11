@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.75.0";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,33 +12,74 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
-    console.log('Starting daily task generation...');
+    // Get current date
+    const today = new Date().toISOString().split('T')[0];
+    const currentDow = new Date().toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
 
-    // Get all active stores
+    console.log(`Generating tasks for ${today} (${currentDow})`);
+
+    // Fetch all active stores
     const { data: stores, error: storesError } = await supabase
       .from('stores')
-      .select('id, name');
+      .select('id, name, region_id')
+      .order('name');
 
-    if (storesError) throw storesError;
+    if (storesError) {
+      console.error('Error fetching stores:', storesError);
+      throw storesError;
+    }
 
-    // Get task templates
+    if (!stores || stores.length === 0) {
+      console.log('No stores found');
+      return new Response(
+        JSON.stringify({ message: 'No stores found', tasksCreated: 0 }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Fetch all active task templates
     const { data: templates, error: templatesError } = await supabase
       .from('task_templates')
-      .select('*');
+      .select('*')
+      .order('priority', { ascending: false });
 
-    if (templatesError) throw templatesError;
+    if (templatesError) {
+      console.error('Error fetching templates:', templatesError);
+      throw templatesError;
+    }
 
-    const today = new Date().toISOString().split('T')[0];
+    if (!templates || templates.length === 0) {
+      console.log('No task templates found');
+      return new Response(
+        JSON.stringify({ message: 'No task templates found', tasksCreated: 0 }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Filter templates that should run today
+    const templatesToRun = templates.filter(template => {
+      if (template.frequency === 'DAILY') {
+        return true;
+      } else if (template.frequency === 'WEEKLY' || template.frequency === 'CUSTOM') {
+        return template.dow && template.dow.includes(currentDow);
+      }
+      return false;
+    });
+
+    console.log(`Found ${templatesToRun.length} templates to run today out of ${templates.length} total`);
+
+    let tasksCreated = 0;
     const tasksToCreate = [];
 
-    // Generate daily tasks for each store based on templates
+    // Create tasks for each store and applicable template
     for (const store of stores) {
-      for (const template of templates) {
-        // Check if task already exists for today
+      for (const template of templatesToRun) {
+        // Check if task already exists for this store, template, and date
         const { data: existingTask } = await supabase
           .from('tasks')
           .select('id')
@@ -53,35 +94,43 @@ serve(async (req) => {
             template_id: template.id,
             title: template.title,
             description: template.description,
+            category: template.category,
             priority: template.priority,
+            status: 'not_started',
             due_date: today,
-            status: 'not_started'
+            created_at: new Date().toISOString()
           });
         }
       }
     }
 
-    // Insert tasks
+    // Bulk insert tasks
     if (tasksToCreate.length > 0) {
-      const { error: insertError } = await supabase
+      const { data: insertedTasks, error: insertError } = await supabase
         .from('tasks')
-        .insert(tasksToCreate);
+        .insert(tasksToCreate)
+        .select();
 
-      if (insertError) throw insertError;
-      
-      console.log(`Created ${tasksToCreate.length} tasks for ${stores.length} stores`);
-    } else {
-      console.log('No new tasks to create');
+      if (insertError) {
+        console.error('Error creating tasks:', insertError);
+        throw insertError;
+      }
+
+      tasksCreated = insertedTasks?.length || 0;
+      console.log(`Created ${tasksCreated} tasks`);
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        tasksCreated: tasksToCreate.length,
-        storesProcessed: stores.length 
+      JSON.stringify({
+        success: true,
+        date: today,
+        storesProcessed: stores.length,
+        templatesProcessed: templatesToRun.length,
+        tasksCreated
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+
   } catch (error) {
     console.error('Error in daily-task-generator:', error);
     return new Response(
