@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.api-integration]
 verify_jwt = false
+
+[functions.ai-task-suggestions]
+verify_jwt = false
+
+[functions.demand-forecast]
+verify_jwt = false
