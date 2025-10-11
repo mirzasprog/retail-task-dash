@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.kpi-aggregator]
 verify_jwt = false
+
+[functions.api-integration]
+verify_jwt = false

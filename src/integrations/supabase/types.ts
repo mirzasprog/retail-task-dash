@@ -71,6 +71,39 @@ export type Database = {
           },
         ]
       }
+      idempotency_keys: {
+        Row: {
+          created_at: string
+          endpoint: string
+          expires_at: string
+          id: string
+          idempotency_key: string
+          request_hash: string
+          response_body: Json | null
+          response_status: number
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          expires_at: string
+          id?: string
+          idempotency_key: string
+          request_hash: string
+          response_body?: Json | null
+          response_status: number
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          expires_at?: string
+          id?: string
+          idempotency_key?: string
+          request_hash?: string
+          response_body?: Json | null
+          response_status?: number
+        }
+        Relationships: []
+      }
       kpis: {
         Row: {
           availability_percent: number | null
@@ -312,6 +345,45 @@ export type Database = {
           },
         ]
       }
+      sync_logs: {
+        Row: {
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          latency_ms: number
+          metadata: Json | null
+          method: string
+          payload_hash: string | null
+          request_id: string | null
+          status: number
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          latency_ms: number
+          metadata?: Json | null
+          method: string
+          payload_hash?: string | null
+          request_id?: string | null
+          status: number
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          latency_ms?: number
+          metadata?: Json | null
+          method?: string
+          payload_hash?: string | null
+          request_id?: string | null
+          status?: number
+        }
+        Relationships: []
+      }
       task_history: {
         Row: {
           action: string
@@ -490,6 +562,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_idempotency_keys: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_user_region_stores: {
         Args: { _user_id: string }
         Returns: string[]
