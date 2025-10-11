@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
 
 const Auth = () => {
-  const navigate = useNavigate();
+  const { signIn, signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -20,21 +20,13 @@ const Auth = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    // Mock authentication - in production, this would call your backend
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem('user', JSON.stringify({ 
-          email, 
-          role: 'Store Manager',
-          store: 'Store #001 - City Center' 
-        }));
-        toast.success('Welcome back!');
-        navigate('/dashboard');
-      } else {
-        toast.error('Please fill in all fields');
-      }
+    try {
+      await signIn(email, password);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign in");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,29 +37,25 @@ const Auth = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
+    const fullName = formData.get('fullName') as string;
 
-    setTimeout(() => {
-      if (!email || !password || !confirmPassword) {
+    try {
+      if (!email || !password || !confirmPassword || !fullName) {
         toast.error('Please fill in all fields');
-        setIsLoading(false);
         return;
       }
 
       if (password !== confirmPassword) {
         toast.error('Passwords do not match');
-        setIsLoading(false);
         return;
       }
 
-      localStorage.setItem('user', JSON.stringify({ 
-        email, 
-        role: 'Store Manager',
-        store: 'Store #001 - City Center' 
-      }));
-      toast.success('Account created successfully!');
-      navigate('/dashboard');
+      await signUp(email, password, fullName);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create account");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -131,6 +119,16 @@ const Auth = () => {
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
+                    <Label htmlFor="signup-fullname">Full Name</Label>
+                    <Input 
+                      id="signup-fullname"
+                      name="fullName" 
+                      type="text" 
+                      placeholder="John Doe"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input 
                       id="signup-email"
@@ -168,7 +166,7 @@ const Auth = () => {
         </Tabs>
 
         <p className="text-center text-sm text-muted-foreground mt-4">
-          Demo credentials: any email/password combination
+          Create an account to get started with the retail dashboard
         </p>
       </div>
     </div>
