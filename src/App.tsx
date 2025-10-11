@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import MyDay from "./pages/MyDay";
 import AISuggestions from "./pages/AISuggestions";
 import PriceChecker from "./pages/PriceChecker";
+import TaskMap from "./pages/TaskMap";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/my-day" element={<MyDay />} />
           <Route path="/ai-suggestions" element={<AISuggestions />} />
           <Route path="/price-checker" element={<PriceChecker />} />
+          <Route path="/task-map" element={<TaskMap />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

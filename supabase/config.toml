@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.demand-forecast]
 verify_jwt = false
+
+[functions.sla-monitor]
+verify_jwt = false
