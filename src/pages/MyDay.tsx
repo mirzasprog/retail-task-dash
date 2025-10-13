@@ -56,10 +56,27 @@ const MyDay = () => {
   const fetchTodayTasks = async () => {
     try {
       const today = format(new Date(), 'yyyy-MM-dd');
+      
+      // Fetch user's store_id from profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('store_id')
+        .eq('id', user?.id)
+        .single();
+
+      if (!profile?.store_id) {
+        console.error('No store assigned to user');
+        toast.error('No store assigned to your account');
+        setLoading(false);
+        return;
+      }
+
+      // Fetch tasks for user's store only
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
         .eq('due_date', today)
+        .eq('store_id', profile.store_id)
         .order('priority', { ascending: false })
         .order('created_at', { ascending: true });
 

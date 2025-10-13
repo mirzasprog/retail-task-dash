@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, CheckCircle2, Clock, TrendingUp } from "lucide-react";
 
@@ -9,11 +10,12 @@ const Index = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Check if user is already logged in
-    const user = localStorage.getItem('user');
-    if (user) {
-      navigate('/dashboard');
-    }
+    // Check if user is already logged in via Supabase session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate('/dashboard');
+      }
+    });
   }, [navigate]);
 
   const features = [
