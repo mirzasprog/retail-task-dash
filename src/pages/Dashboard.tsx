@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
+import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Header } from "@/components/Header";
+import { Loader2 } from "lucide-react";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -99,13 +103,57 @@ const TaskItem = ({ task }: { task: Task }) => {
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const [selectedStore, setSelectedStore] = useState("store-1");
+  const { user } = useAuth();
+  const { isStoreManager, isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
+  const [selectedStore, setSelectedStore] = useState<string>("");
+  const [availableStores, setAvailableStores] = useState<Array<{ id: string; name: string }>>([]);
+  const [userStoreId, setUserStoreId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const stores = [
-    { id: "store-1", name: "Store #001 - City Center" },
-    { id: "store-2", name: "Store #002 - Mall West" },
-    { id: "store-3", name: "Store #003 - North Plaza" },
-  ];
+  useEffect(() => {
+    if (user && !roleLoading) {
+      fetchUserStores();
+    }
+  }, [user, roleLoading, isStoreManager, isHQAdmin]);
+
+  const fetchUserStores = async () => {
+    try {
+      // Get user's profile to check their assigned store
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('store_id')
+        .eq('id', user?.id)
+        .single();
+
+      setUserStoreId(profile?.store_id || null);
+
+      // Fetch stores based on role
+      let storesQuery = supabase.from('stores').select('id, name, code');
+
+      // If store manager, only show their assigned store
+      if (isStoreManager && !isHQAdmin && profile?.store_id) {
+        storesQuery = storesQuery.eq('id', profile.store_id);
+      }
+
+      const { data: stores } = await storesQuery.order('code');
+
+      const formattedStores = (stores || []).map(s => ({
+        id: s.id,
+        name: s.name
+      }));
+
+      setAvailableStores(formattedStores);
+      
+      // Set initial selected store
+      if (formattedStores.length > 0) {
+        setSelectedStore(formattedStores[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching stores:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Dynamic data based on selected store
   const storeDataMap: { [key: string]: any } = {
@@ -183,6 +231,14 @@ const Dashboard = () => {
   const completedTasks = tasks.filter(t => t.status === 'done').length;
   const taskProgress = (completedTasks / tasks.length) * 100;
 
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -194,18 +250,23 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold">{t('dashboard.storeDashboard')}</h1>
             <p className="text-muted-foreground">{t('dashboard.realTimeInsights')}</p>
           </div>
-          <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {stores.map(store => (
-                <SelectItem key={store.id} value={store.id}>
-                  {store.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {availableStores.length > 1 && (
+            <Select value={selectedStore} onValueChange={setSelectedStore}>
+              <SelectTrigger className="w-[280px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {availableStores.map(store => (
+                  <SelectItem key={store.id} value={store.id}>
+                    {store.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {availableStores.length === 1 && (
+            <div className="text-lg font-semibold">{availableStores[0].name}</div>
+          )}
         </div>
 
         {/* KPI Grid */}
