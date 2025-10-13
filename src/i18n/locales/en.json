@@ -24,12 +24,67 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "storeDashboard": "Store Dashboard",
+    "realTimeInsights": "Real-time insights and daily operations",
     "overview": "Overview",
     "myDay": "My Day",
     "aiSuggestions": "AI Suggestions",
     "priceChecker": "Price Checker",
     "taskMap": "Task Map",
-    "taskTemplates": "Task Templates"
+    "taskTemplates": "Task Templates",
+    "dailySales": "Daily Sales",
+    "shrinkage": "Shrinkage",
+    "availability": "Availability",
+    "scoUptime": "SCO Uptime",
+    "queueTime": "Queue Time",
+    "cashVariance": "Cash Variance",
+    "fromYesterday": "from yesterday",
+    "weeklySalesTrend": "Weekly Sales Trend",
+    "last7Days": "Last 7 days performance",
+    "dailyTasks": "Daily Tasks",
+    "completedOf": "of",
+    "completedTasks": "completed"
+  },
+  "myDay": {
+    "title": "My Day",
+    "progress": "Progress",
+    "completed": "completed",
+    "completeAll": "Complete All",
+    "noTasksToday": "No tasks for today!",
+    "accessRestricted": "Access Restricted",
+    "storeManagerOnly": "This view is only available for store managers.",
+    "photo": "Photo",
+    "location": "Location",
+    "located": "Located",
+    "startTask": "Start Task",
+    "completeTask": "Complete Task",
+    "taskCompleted": "Completed",
+    "addNotes": "Add notes or comments...",
+    "notes": "Notes"
+  },
+  "index": {
+    "hero": {
+      "title": "Retail Operations",
+      "subtitle": "Made Simple",
+      "description": "Streamline your store management with real-time insights, automated task tracking, and powerful analytics in one unified dashboard.",
+      "getStarted": "Get Started",
+      "viewDemo": "View Demo"
+    },
+    "features": {
+      "realTimeKPIs": "Real-time KPIs",
+      "realTimeKPIsDesc": "Track sales, shrinkage, availability, and more in real-time",
+      "taskManagement": "Task Management",
+      "taskManagementDesc": "Never miss a daily task with our smart tracking system",
+      "trendAnalysis": "Trend Analysis",
+      "trendAnalysisDesc": "Visualize performance trends and make data-driven decisions",
+      "timeTracking": "Time Tracking",
+      "timeTrackingDesc": "Monitor queue times and operational efficiency metrics"
+    },
+    "stats": {
+      "uptime": "System Uptime",
+      "monitoring": "Real-time Monitoring",
+      "stores": "Stores Managed"
+    }
   },
   "tasks": {
     "title": "Tasks",
@@ -44,7 +99,9 @@
     "completed": "Completed",
     "high": "High",
     "medium": "Medium",
-    "low": "Low"
+    "low": "Low",
+    "pending": "Pending",
+    "done": "Done"
   },
   "common": {
     "save": "Save",
@@ -55,6 +112,7 @@
     "search": "Search",
     "filter": "Filter",
     "loading": "Loading...",
-    "noData": "No data available"
+    "noData": "No data available",
+    "of": "of"
   }
 }

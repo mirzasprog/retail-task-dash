@@ -24,12 +24,67 @@
   },
   "dashboard": {
     "title": "Nadzorna plošča",
+    "storeDashboard": "Nadzorna plošča trgovine",
+    "realTimeInsights": "Vpogledi v realnem času in dnevne operacije",
     "overview": "Pregled",
     "myDay": "Moj dan",
     "aiSuggestions": "AI predlogi",
     "priceChecker": "Preverjanje cen",
     "taskMap": "Zemljevid nalog",
-    "taskTemplates": "Predloge nalog"
+    "taskTemplates": "Predloge nalog",
+    "dailySales": "Dnevna prodaja",
+    "shrinkage": "Izgube",
+    "availability": "Razpoložljivost",
+    "scoUptime": "SCO Delovanje",
+    "queueTime": "Čas čakanja",
+    "cashVariance": "Razlika v gotovini",
+    "fromYesterday": "od včeraj",
+    "weeklySalesTrend": "Tedenski trend prodaje",
+    "last7Days": "Učinkovitost zadnjih 7 dni",
+    "dailyTasks": "Dnevne naloge",
+    "completedOf": "od",
+    "completedTasks": "opravljeno"
+  },
+  "myDay": {
+    "title": "Moj dan",
+    "progress": "Napredek",
+    "completed": "opravljeno",
+    "completeAll": "Dokonča vse",
+    "noTasksToday": "Ni nalog za danes!",
+    "accessRestricted": "Dostop omejen",
+    "storeManagerOnly": "Ta pogled je na voljo samo za vodje trgovin.",
+    "photo": "Fotografija",
+    "location": "Lokacija",
+    "located": "Locirano",
+    "startTask": "Začni nalogo",
+    "completeTask": "Dokonči nalogo",
+    "taskCompleted": "Dokončano",
+    "addNotes": "Dodaj opombe ali komentarje...",
+    "notes": "Opombe"
+  },
+  "index": {
+    "hero": {
+      "title": "Maloprodajne operacije",
+      "subtitle": "Narejene preprosto",
+      "description": "Poenostavite upravljanje trgovine z vpogledi v realnem času, avtomatiziranim sledenjem nalog in zmogljivo analitiko v enotni nadzorni plošči.",
+      "getStarted": "Začnite",
+      "viewDemo": "Ogled Demo"
+    },
+    "features": {
+      "realTimeKPIs": "KPI-ji v realnem času",
+      "realTimeKPIsDesc": "Spremljajte prodajo, izgube, razpoložljivost in več v realnem času",
+      "taskManagement": "Upravljanje nalog",
+      "taskManagementDesc": "Nikoli ne zamudite dnevne naloge z našim pametnim sistemom sledenja",
+      "trendAnalysis": "Analiza trendov",
+      "trendAnalysisDesc": "Vizualizirajte trende učinkovitosti in sprejemajte odločitve na podlagi podatkov",
+      "timeTracking": "Sledenje času",
+      "timeTrackingDesc": "Spremljajte čase čakanja in metrike operativne učinkovitosti"
+    },
+    "stats": {
+      "uptime": "Delovanje sistema",
+      "monitoring": "Spremljanje v realnem času",
+      "stores": "Upravljanih trgovin"
+    }
   },
   "tasks": {
     "title": "Naloge",
@@ -44,7 +99,9 @@
     "completed": "Končano",
     "high": "Visoka",
     "medium": "Srednja",
-    "low": "Nizka"
+    "low": "Nizka",
+    "pending": "Na čakanju",
+    "done": "Opravljeno"
   },
   "common": {
     "save": "Shrani",
@@ -55,6 +112,7 @@
     "search": "Iskanje",
     "filter": "Filter",
     "loading": "Nalaganje...",
-    "noData": "Ni podatkov"
+    "noData": "Ni podatkov",
+    "of": "od"
   }
 }

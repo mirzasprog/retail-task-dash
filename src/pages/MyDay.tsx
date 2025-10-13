@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +37,7 @@ interface Task {
 }
 
 const MyDay = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isStoreManager, loading: roleLoading } = useUserRole(user?.id);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -257,12 +259,12 @@ const MyDay = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-warning" />
-              Access Restricted
+              {t('myDay.accessRestricted')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              This view is only available for store managers.
+              {t('myDay.storeManagerOnly')}
             </p>
           </CardContent>
         </Card>
@@ -296,7 +298,7 @@ const MyDay = () => {
       <div className="sticky top-0 z-10 bg-background border-b">
         <div className="p-4">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold mb-1">My Day</h1>
+            <h1 className="text-2xl font-bold mb-1">{t('myDay.title')}</h1>
             <p className="text-sm text-muted-foreground">
               {format(new Date(), 'EEEE, MMMM d, yyyy')}
             </p>
@@ -305,7 +307,7 @@ const MyDay = () => {
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">
-                  {completedCount} of {tasks.length} completed
+                  {completedCount} {t('common.of')} {tasks.length} {t('myDay.completed')}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   {Math.round(progressPercent)}%
@@ -323,7 +325,7 @@ const MyDay = () => {
                 variant="outline"
               >
                 <CheckCheck className="h-4 w-4 mr-2" />
-                Complete All
+                {t('myDay.completeAll')}
               </Button>
             </div>
           </div>
@@ -337,7 +339,7 @@ const MyDay = () => {
             <Card>
               <CardContent className="py-12 text-center">
                 <CheckCircle2 className="h-12 w-12 text-success mx-auto mb-4" />
-                <p className="text-muted-foreground">No tasks for today!</p>
+                <p className="text-muted-foreground">{t('myDay.noTasksToday')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -360,7 +362,7 @@ const MyDay = () => {
                       </div>
                     </div>
                     <Badge variant={getPriorityColor(task.priority) as any}>
-                      {task.priority}
+                      {t(`tasks.${task.priority}`)}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -388,7 +390,7 @@ const MyDay = () => {
                   {/* Comments */}
                   {task.status !== 'completed' && (
                     <Textarea
-                      placeholder="Add notes or comments..."
+                      placeholder={t('myDay.addNotes')}
                       value={comments[task.id] || ''}
                       onChange={(e) => setComments({ ...comments, [task.id]: e.target.value })}
                       className="min-h-[60px]"
@@ -397,7 +399,7 @@ const MyDay = () => {
 
                   {task.comments && (
                     <div className="text-sm bg-muted p-3 rounded-lg">
-                      <p className="font-medium mb-1">Notes:</p>
+                      <p className="font-medium mb-1">{t('myDay.notes')}:</p>
                       <p className="text-muted-foreground">{task.comments}</p>
                     </div>
                   )}
@@ -426,7 +428,7 @@ const MyDay = () => {
                             >
                               <span>
                                 <Camera className="h-4 w-4 mr-2" />
-                                Photo
+                                {t('myDay.photo')}
                               </span>
                             </Button>
                           </label>
@@ -439,7 +441,7 @@ const MyDay = () => {
                           disabled={!!task.latitude}
                         >
                           <MapPin className="h-4 w-4 mr-2" />
-                          {task.latitude ? 'Located' : 'Location'}
+                          {task.latitude ? t('myDay.located') : t('myDay.location')}
                         </Button>
 
                         {/* Start/Complete */}
@@ -455,7 +457,7 @@ const MyDay = () => {
                             ) : (
                               <PlayCircle className="h-4 w-4 mr-2" />
                             )}
-                            Start Task
+                            {t('myDay.startTask')}
                           </Button>
                         )}
 
@@ -470,7 +472,7 @@ const MyDay = () => {
                             ) : (
                               <CheckCircle2 className="h-4 w-4 mr-2" />
                             )}
-                            Complete Task
+                            {t('myDay.completeTask')}
                           </Button>
                         )}
                       </>
@@ -478,7 +480,7 @@ const MyDay = () => {
 
                     {task.status === 'completed' && (
                       <div className="col-span-2 text-center py-2 text-success font-medium">
-                        ✓ Completed
+                        ✓ {t('myDay.taskCompleted')}
                       </div>
                     )}
                   </div>

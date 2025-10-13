@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, CheckCircle2, Clock, TrendingUp } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -17,23 +19,23 @@ const Index = () => {
   const features = [
     {
       icon: <BarChart3 className="h-6 w-6" />,
-      title: "Real-time KPIs",
-      description: "Track sales, shrinkage, availability, and more in real-time"
+      title: t('index.features.realTimeKPIs'),
+      description: t('index.features.realTimeKPIsDesc')
     },
     {
       icon: <CheckCircle2 className="h-6 w-6" />,
-      title: "Task Management",
-      description: "Never miss a daily task with our smart tracking system"
+      title: t('index.features.taskManagement'),
+      description: t('index.features.taskManagementDesc')
     },
     {
       icon: <TrendingUp className="h-6 w-6" />,
-      title: "Trend Analysis",
-      description: "Visualize performance trends and make data-driven decisions"
+      title: t('index.features.trendAnalysis'),
+      description: t('index.features.trendAnalysisDesc')
     },
     {
       icon: <Clock className="h-6 w-6" />,
-      title: "Time Tracking",
-      description: "Monitor queue times and operational efficiency metrics"
+      title: t('index.features.timeTracking'),
+      description: t('index.features.timeTrackingDesc')
     }
   ];
 
@@ -44,14 +46,13 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-              Retail Operations
+              {t('index.hero.title')}
               <span className="block bg-gradient-primary bg-clip-text text-transparent">
-                Made Simple
+                {t('index.hero.subtitle')}
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Streamline your store management with real-time insights, automated task tracking, 
-              and powerful analytics in one unified dashboard.
+              {t('index.hero.description')}
             </p>
           </div>
 
@@ -61,7 +62,7 @@ const Index = () => {
               onClick={() => navigate('/auth')}
               className="text-lg px-8"
             >
-              Get Started
+              {t('index.hero.getStarted')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
@@ -70,7 +71,7 @@ const Index = () => {
               onClick={() => navigate('/dashboard')}
               className="text-lg px-8"
             >
-              View Demo
+              {t('index.hero.viewDemo')}
             </Button>
           </div>
         </div>
@@ -96,15 +97,15 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold text-primary">99.5%</div>
-              <div className="text-sm text-muted-foreground mt-1">System Uptime</div>
+              <div className="text-sm text-muted-foreground mt-1">{t('index.stats.uptime')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-success">24/7</div>
-              <div className="text-sm text-muted-foreground mt-1">Real-time Monitoring</div>
+              <div className="text-sm text-muted-foreground mt-1">{t('index.stats.monitoring')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-accent">500+</div>
-              <div className="text-sm text-muted-foreground mt-1">Stores Managed</div>
+              <div className="text-sm text-muted-foreground mt-1">{t('index.stats.stores')}</div>
             </div>
           </div>
         </div>

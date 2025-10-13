@@ -24,12 +24,67 @@
   },
   "dashboard": {
     "title": "Kontrolna tabla",
+    "storeDashboard": "Kontrolna tabla trgovine",
+    "realTimeInsights": "Uvidi u realnom vremenu i dnevne operacije",
     "overview": "Pregled",
     "myDay": "Moj dan",
     "aiSuggestions": "AI sugestije",
     "priceChecker": "Provjera cijena",
     "taskMap": "Mapa zadataka",
-    "taskTemplates": "Predlošci zadataka"
+    "taskTemplates": "Predlošci zadataka",
+    "dailySales": "Dnevna prodaja",
+    "shrinkage": "Kalo",
+    "availability": "Dostupnost",
+    "scoUptime": "SCO Vrijeme rada",
+    "queueTime": "Vrijeme čekanja",
+    "cashVariance": "Razlika u gotovini",
+    "fromYesterday": "od jučer",
+    "weeklySalesTrend": "Sedmični trend prodaje",
+    "last7Days": "Performanse zadnjih 7 dana",
+    "dailyTasks": "Dnevni zadaci",
+    "completedOf": "od",
+    "completedTasks": "završeno"
+  },
+  "myDay": {
+    "title": "Moj dan",
+    "progress": "Napredak",
+    "completed": "završeno",
+    "completeAll": "Završi sve",
+    "noTasksToday": "Nema zadataka za danas!",
+    "accessRestricted": "Pristup ograničen",
+    "storeManagerOnly": "Ovaj prikaz je dostupan samo za menadžere trgovina.",
+    "photo": "Fotografija",
+    "location": "Lokacija",
+    "located": "Locirano",
+    "startTask": "Započni zadatak",
+    "completeTask": "Završi zadatak",
+    "taskCompleted": "Završeno",
+    "addNotes": "Dodajte bilješke ili komentare...",
+    "notes": "Bilješke"
+  },
+  "index": {
+    "hero": {
+      "title": "Retail operacije",
+      "subtitle": "Učinjene jednostavnim",
+      "description": "Pojednostavite upravljanje trgovinom s uvidima u realnom vremenu, automatskim praćenjem zadataka i moćnom analitikom na jednoj nadzornoj ploči.",
+      "getStarted": "Započnite",
+      "viewDemo": "Pogledaj Demo"
+    },
+    "features": {
+      "realTimeKPIs": "KPI-ji u realnom vremenu",
+      "realTimeKPIsDesc": "Pratite prodaju, kalo, dostupnost i više u realnom vremenu",
+      "taskManagement": "Upravljanje zadacima",
+      "taskManagementDesc": "Nikad ne propustite dnevni zadatak s našim pametnim sistemom praćenja",
+      "trendAnalysis": "Analiza trendova",
+      "trendAnalysisDesc": "Vizualizirajte trendove performansi i donosite odluke zasnovane na podacima",
+      "timeTracking": "Praćenje vremena",
+      "timeTrackingDesc": "Pratite vrijeme čekanja i metrike operativne efikasnosti"
+    },
+    "stats": {
+      "uptime": "Vrijeme rada sistema",
+      "monitoring": "Praćenje u realnom vremenu",
+      "stores": "Upravljanih trgovina"
+    }
   },
   "tasks": {
     "title": "Zadaci",
@@ -44,7 +99,9 @@
     "completed": "Završeno",
     "high": "Visok",
     "medium": "Srednji",
-    "low": "Nizak"
+    "low": "Nizak",
+    "pending": "Na čekanju",
+    "done": "Gotovo"
   },
   "common": {
     "save": "Spremi",
@@ -55,6 +112,7 @@
     "search": "Pretraži",
     "filter": "Filter",
     "loading": "Učitavanje...",
-    "noData": "Nema dostupnih podataka"
+    "noData": "Nema dostupnih podataka",
+    "of": "od"
   }
 }
