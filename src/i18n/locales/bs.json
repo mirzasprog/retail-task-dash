@@ -46,6 +46,8 @@
     "currentWeekComparison": "Trenutna sedmica u odnosu na istu sedmicu prošle godine",
     "currentMonthComparison": "Trenutni mjesec u odnosu na isti mjesec prošle godine",
     "dayOfMonth": "Dan u mjesecu",
+    "currentYear": "Tekuća godina",
+    "lastYear": "Prošla godina",
     "dailyTasks": "Dnevni zadaci",
     "completedOf": "od",
     "completedTasks": "završeno",

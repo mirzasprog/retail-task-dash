@@ -46,6 +46,8 @@
     "currentWeekComparison": "Trenutni teden v primerjavi z istim tednom lani",
     "currentMonthComparison": "Trenutni mesec v primerjavi z istim mesecem lani",
     "dayOfMonth": "Dan v mesecu",
+    "currentYear": "Trenutno leto",
+    "lastYear": "Lansko leto",
     "dailyTasks": "Dnevne naloge",
     "completedOf": "od",
     "completedTasks": "opravljeno",
