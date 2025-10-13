@@ -121,6 +121,8 @@ const Dashboard = () => {
   const [todayTasks, setTodayTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
   const [allTasks, setAllTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
   const [showMonthlySales, setShowMonthlySales] = useState(false);
+  const [showCategoryBreakdown, setShowCategoryBreakdown] = useState(false);
+  const [categoryData, setCategoryData] = useState<Array<{ name: string; sales: number; percentage: number }>>([]);
 
   useEffect(() => {
     if (user && !roleLoading) {
@@ -222,6 +224,68 @@ const Dashboard = () => {
     }
   };
 
+  const fetchCategoryBreakdown = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      const { data: categorySales, error } = await supabase
+        .from('daily_category_sales')
+        .select(`
+          sales_amount,
+          category_id,
+          product_categories (
+            name
+          )
+        `)
+        .eq('store_id', selectedStore)
+        .eq('date', today);
+
+      if (error) {
+        console.error('Error fetching category sales:', error);
+        // Generate mock data for demonstration
+        const mockCategories = [
+          { name: 'Fruits and Vegetables', sales: 2500, percentage: 20.2 },
+          { name: 'Meat and Fish', sales: 2000, percentage: 16.2 },
+          { name: 'Dairy Products', sales: 1800, percentage: 14.6 },
+          { name: 'Bakery', sales: 1500, percentage: 12.1 },
+          { name: 'Beverages', sales: 1300, percentage: 10.5 },
+          { name: 'Snacks and Sweets', sales: 1100, percentage: 8.9 },
+          { name: 'Frozen Foods', sales: 900, percentage: 7.3 },
+          { name: 'Other', sales: 1245, percentage: 10.1 }
+        ];
+        setCategoryData(mockCategories);
+        return;
+      }
+
+      if (!categorySales || categorySales.length === 0) {
+        // Generate mock data for demonstration
+        const mockCategories = [
+          { name: 'Fruits and Vegetables', sales: 2500, percentage: 20.2 },
+          { name: 'Meat and Fish', sales: 2000, percentage: 16.2 },
+          { name: 'Dairy Products', sales: 1800, percentage: 14.6 },
+          { name: 'Bakery', sales: 1500, percentage: 12.1 },
+          { name: 'Beverages', sales: 1300, percentage: 10.5 },
+          { name: 'Snacks and Sweets', sales: 1100, percentage: 8.9 },
+          { name: 'Frozen Foods', sales: 900, percentage: 7.3 },
+          { name: 'Other', sales: 1245, percentage: 10.1 }
+        ];
+        setCategoryData(mockCategories);
+        return;
+      }
+
+      const totalSales = categorySales.reduce((sum, cat) => sum + (cat.sales_amount || 0), 0);
+      const formatted = categorySales.map(cat => ({
+        name: (cat.product_categories as any)?.name || 'Unknown',
+        sales: cat.sales_amount || 0,
+        percentage: totalSales > 0 ? ((cat.sales_amount || 0) / totalSales) * 100 : 0
+      }));
+
+      setCategoryData(formatted);
+    } catch (error) {
+      console.error('Error fetching category breakdown:', error);
+    }
+  };
+
   // Generate monthly sales data for current month
   const generateMonthlySales = () => {
     const now = new Date();
@@ -262,7 +326,7 @@ const Dashboard = () => {
         { title: t('dashboard.availability'), value: "96.2%", change: 2.1, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
         { title: t('dashboard.scoUptime'), value: "98.5%", change: 1.2, icon: <ShoppingCart className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
         { title: t('dashboard.queueTime'), value: "2.3 min", change: -15.2, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
-        { title: t('dashboard.cashVariance'), value: "€12", change: -40, icon: <Users className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
+        { title: t('dashboard.fruitsVegShare'), value: "20.2%", change: 1.5, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
       sales: [
         { name: 'Mon', sales: 11200 },
@@ -281,7 +345,7 @@ const Dashboard = () => {
         { title: t('dashboard.availability'), value: "94.8%", change: -1.3, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const },
         { title: t('dashboard.scoUptime'), value: "96.2%", change: -2.1, icon: <ShoppingCart className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const },
         { title: t('dashboard.queueTime'), value: "3.1 min", change: 8.5, icon: <Clock className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
-        { title: t('dashboard.cashVariance'), value: "€25", change: 15, icon: <Users className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
+        { title: t('dashboard.fruitsVegShare'), value: "18.5%", change: -0.8, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
       sales: [
         { name: 'Mon', sales: 9200 },
@@ -300,7 +364,7 @@ const Dashboard = () => {
         { title: t('dashboard.availability'), value: "97.8%", change: 3.2, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
         { title: t('dashboard.scoUptime'), value: "99.1%", change: 0.8, icon: <ShoppingCart className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
         { title: t('dashboard.queueTime'), value: "1.8 min", change: -22.3, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
-        { title: t('dashboard.cashVariance'), value: "€8", change: -50, icon: <Users className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
+        { title: t('dashboard.fruitsVegShare'), value: "22.1%", change: 2.3, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
       sales: [
         { name: 'Mon', sales: 14200 },
@@ -497,6 +561,36 @@ const Dashboard = () => {
                   <TableCell className="font-medium">{day.dayName}</TableCell>
                   <TableCell>{day.date}</TableCell>
                   <TableCell className="text-right font-semibold">{day.formattedSales}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </DialogContent>
+      </Dialog>
+
+      {/* Category Breakdown Dialog */}
+      <Dialog open={showCategoryBreakdown} onOpenChange={setShowCategoryBreakdown}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.categoryBreakdown')}</DialogTitle>
+            <DialogDescription>
+              {t('dashboard.todaySalesByCategory')}
+            </DialogDescription>
+          </DialogHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('dashboard.category')}</TableHead>
+                <TableHead className="text-right">{t('dashboard.sales')}</TableHead>
+                <TableHead className="text-right">{t('dashboard.share')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {categoryData.map((category, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{category.name}</TableCell>
+                  <TableCell className="text-right">€{category.sales.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-semibold">{category.percentage.toFixed(1)}%</TableCell>
                 </TableRow>
               ))}
             </TableBody>

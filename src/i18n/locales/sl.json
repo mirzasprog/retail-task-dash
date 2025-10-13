@@ -38,6 +38,7 @@
     "scoUptime": "SCO Delovanje",
     "queueTime": "Čas čakanja",
     "cashVariance": "Razlika v gotovini",
+    "fruitsVegShare": "Delež sadja in zelenjave",
     "fromYesterday": "od včeraj",
     "weeklySalesTrend": "Tedenski trend prodaje",
     "last7Days": "Učinkovitost zadnjih 7 dni",
@@ -50,7 +51,11 @@
     "monthlySalesBreakdown": "Mesečni razčlen prodaje",
     "day": "Dan",
     "date": "Datum",
-    "sales": "Prodaja"
+    "sales": "Prodaja",
+    "categoryBreakdown": "Razčlenitev prodaje po kategorijah",
+    "todaySalesByCategory": "Današnja prodaja po kategorijah izdelkov",
+    "category": "Kategorija",
+    "share": "Delež"
   },
   "myDay": {
     "title": "Moj dan",

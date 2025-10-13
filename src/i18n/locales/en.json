@@ -38,6 +38,7 @@
     "scoUptime": "SCO Uptime",
     "queueTime": "Queue Time",
     "cashVariance": "Cash Variance",
+    "fruitsVegShare": "Fruits & Veg Share",
     "fromYesterday": "from yesterday",
     "weeklySalesTrend": "Weekly Sales Trend",
     "last7Days": "Last 7 days performance",
@@ -50,7 +51,11 @@
     "monthlySalesBreakdown": "Monthly Sales Breakdown",
     "day": "Day",
     "date": "Date",
-    "sales": "Sales"
+    "sales": "Sales",
+    "categoryBreakdown": "Category Sales Breakdown",
+    "todaySalesByCategory": "Today's sales by product category",
+    "category": "Category",
+    "share": "Share"
   },
   "myDay": {
     "title": "My Day",
