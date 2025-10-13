@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Header } from "@/components/Header";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -33,9 +35,10 @@ interface KPICardProps {
   icon: React.ReactNode;
   trend: 'up' | 'down';
   status: 'good' | 'warning' | 'critical';
+  onClick?: () => void;
 }
 
-const KPICard = ({ title, value, change, icon, trend, status }: KPICardProps) => {
+const KPICard = ({ title, value, change, icon, trend, status, onClick }: KPICardProps) => {
   const { t } = useTranslation();
   const statusColors = {
     good: 'text-success',
@@ -44,7 +47,10 @@ const KPICard = ({ title, value, change, icon, trend, status }: KPICardProps) =>
   };
 
   return (
-    <Card className="bg-gradient-card hover:shadow-lg transition-all duration-300">
+    <Card 
+      className={`bg-gradient-card hover:shadow-lg transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div className={statusColors[status]}>{icon}</div>
@@ -114,6 +120,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [todayTasks, setTodayTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
   const [allTasks, setAllTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
+  const [showMonthlySales, setShowMonthlySales] = useState(false);
 
   useEffect(() => {
     if (user && !roleLoading) {
@@ -215,11 +222,42 @@ const Dashboard = () => {
     }
   };
 
+  // Generate monthly sales data for current month
+  const generateMonthlySales = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const currentDay = now.getDate();
+    
+    const baseAmount = selectedStore === "store-1" ? 12000 : selectedStore === "store-2" ? 9500 : 15000;
+    
+    return Array.from({ length: currentDay }, (_, i) => {
+      const day = i + 1;
+      const date = new Date(year, month, day);
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const variation = Math.random() * 0.3 - 0.15; // -15% to +15%
+      const weekendBoost = dayName === 'Sat' || dayName === 'Sun' ? 1.2 : 1;
+      const amount = Math.round(baseAmount * (1 + variation) * weekendBoost);
+      
+      return {
+        day,
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        dayName,
+        sales: amount,
+        formattedSales: `€${amount.toLocaleString()}`
+      };
+    });
+  };
+
+  const monthlySalesData = generateMonthlySales();
+  const totalMonthlySales = monthlySalesData.reduce((sum, day) => sum + day.sales, 0);
+
   // Dynamic data based on selected store
   const storeDataMap: { [key: string]: any } = {
     "store-1": {
       kpis: [
-        { title: t('dashboard.dailySales'), value: "€12,345", change: 8.5, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
+        { title: t('dashboard.dailySales'), value: "€12,345", change: 8.5, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => setShowMonthlySales(true) },
         { title: t('dashboard.shrinkage'), value: "0.8%", change: -0.3, icon: <AlertTriangle className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
         { title: t('dashboard.availability'), value: "96.2%", change: 2.1, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
         { title: t('dashboard.scoUptime'), value: "98.5%", change: 1.2, icon: <ShoppingCart className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
@@ -238,7 +276,7 @@ const Dashboard = () => {
     },
     "store-2": {
       kpis: [
-        { title: t('dashboard.dailySales'), value: "€9,876", change: 5.2, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
+        { title: t('dashboard.dailySales'), value: "€9,876", change: 5.2, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => setShowMonthlySales(true) },
         { title: t('dashboard.shrinkage'), value: "1.2%", change: 0.1, icon: <AlertTriangle className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
         { title: t('dashboard.availability'), value: "94.8%", change: -1.3, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const },
         { title: t('dashboard.scoUptime'), value: "96.2%", change: -2.1, icon: <ShoppingCart className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const },
@@ -257,7 +295,7 @@ const Dashboard = () => {
     },
     "store-3": {
       kpis: [
-        { title: t('dashboard.dailySales'), value: "€15,234", change: 12.8, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
+        { title: t('dashboard.dailySales'), value: "€15,234", change: 12.8, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => setShowMonthlySales(true) },
         { title: t('dashboard.shrinkage'), value: "0.5%", change: -0.5, icon: <AlertTriangle className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
         { title: t('dashboard.availability'), value: "97.8%", change: 3.2, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
         { title: t('dashboard.scoUptime'), value: "99.1%", change: 0.8, icon: <ShoppingCart className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
@@ -435,6 +473,36 @@ const Dashboard = () => {
         </div>
       </div>
       </div>
+
+      {/* Monthly Sales Dialog */}
+      <Dialog open={showMonthlySales} onOpenChange={setShowMonthlySales}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.monthlySalesBreakdown')}</DialogTitle>
+            <DialogDescription>
+              {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Total: €{totalMonthlySales.toLocaleString()}
+            </DialogDescription>
+          </DialogHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('dashboard.day')}</TableHead>
+                <TableHead>{t('dashboard.date')}</TableHead>
+                <TableHead className="text-right">{t('dashboard.sales')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {monthlySalesData.map((day) => (
+                <TableRow key={day.day}>
+                  <TableCell className="font-medium">{day.dayName}</TableCell>
+                  <TableCell>{day.date}</TableCell>
+                  <TableCell className="text-right font-semibold">{day.formattedSales}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -46,7 +46,11 @@
     "completedTasks": "opravljeno",
     "viewAllTasks": "Prikaži vse naloge",
     "allTasks": "Vse naloge",
-    "noTasks": "Ni nalog za to trgovino"
+    "noTasks": "Ni nalog za to trgovino",
+    "monthlySalesBreakdown": "Mesečni razčlen prodaje",
+    "day": "Dan",
+    "date": "Datum",
+    "sales": "Prodaja"
   },
   "myDay": {
     "title": "Moj dan",

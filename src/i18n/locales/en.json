@@ -46,7 +46,11 @@
     "completedTasks": "completed",
     "viewAllTasks": "View All Tasks",
     "allTasks": "All Tasks",
-    "noTasks": "No tasks for this store"
+    "noTasks": "No tasks for this store",
+    "monthlySalesBreakdown": "Monthly Sales Breakdown",
+    "day": "Day",
+    "date": "Date",
+    "sales": "Sales"
   },
   "myDay": {
     "title": "My Day",
