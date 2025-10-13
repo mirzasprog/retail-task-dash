@@ -44,7 +44,9 @@
     "dailyTasks": "Dnevne naloge",
     "completedOf": "od",
     "completedTasks": "opravljeno",
-    "viewAllTasks": "Prikaži vse naloge"
+    "viewAllTasks": "Prikaži vse naloge",
+    "allTasks": "Vse naloge",
+    "noTasks": "Ni nalog za to trgovino"
   },
   "myDay": {
     "title": "Moj dan",

@@ -106,13 +106,14 @@ const TaskItem = ({ task }: { task: Task }) => {
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isStoreManager, isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
+  const { isStoreManager, isRegionalSupervisor, isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
   const navigate = useNavigate();
   const [selectedStore, setSelectedStore] = useState<string>("");
   const [availableStores, setAvailableStores] = useState<Array<{ id: string; name: string }>>([]);
   const [userStoreId, setUserStoreId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [todayTasks, setTodayTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
+  const [allTasks, setAllTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
 
   useEffect(() => {
     if (user && !roleLoading) {
@@ -124,7 +125,10 @@ const Dashboard = () => {
     if (selectedStore && isStoreManager) {
       fetchTodayTasks();
     }
-  }, [selectedStore, isStoreManager]);
+    if (selectedStore && (isRegionalSupervisor || isHQAdmin)) {
+      fetchAllTasks();
+    }
+  }, [selectedStore, isStoreManager, isRegionalSupervisor, isHQAdmin]);
 
   const fetchUserStores = async () => {
     try {
@@ -188,6 +192,26 @@ const Dashboard = () => {
       setTodayTasks(data || []);
     } catch (error) {
       console.error('Error fetching today tasks:', error);
+    }
+  };
+
+  const fetchAllTasks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('id, title, status, priority, due_date')
+        .eq('store_id', selectedStore)
+        .order('due_date', { ascending: true })
+        .order('priority', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching all tasks:', error);
+        return;
+      }
+
+      setAllTasks(data || []);
+    } catch (error) {
+      console.error('Error fetching all tasks:', error);
     }
   };
 
@@ -264,8 +288,19 @@ const Dashboard = () => {
     time: new Date(task.due_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
   }));
 
-  const completedTasks = tasks.filter(t => t.status === 'done').length;
+  const allTasksFormatted: Task[] = allTasks.map(task => ({
+    id: task.id,
+    title: task.title,
+    status: task.status === 'completed' ? 'done' : task.status === 'in_progress' ? 'in-progress' : 'pending',
+    priority: task.priority as 'high' | 'medium' | 'low',
+    time: new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }));
+
+  const completedTasks = tasks.length > 0 ? tasks.filter(t => t.status === 'done').length : 0;
   const taskProgress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
+
+  const completedAllTasks = allTasksFormatted.length > 0 ? allTasksFormatted.filter(t => t.status === 'done').length : 0;
+  const allTasksProgress = allTasksFormatted.length > 0 ? (completedAllTasks / allTasksFormatted.length) * 100 : 0;
 
   if (loading || roleLoading) {
     return (
@@ -364,6 +399,32 @@ const Dashboard = () => {
                     </p>
                   ) : (
                     tasks.map(task => (
+                      <TaskItem key={task.id} task={task} />
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* All Tasks - For Regional Supervisors and HQ Admins */}
+          {(isRegionalSupervisor || isHQAdmin) && !isStoreManager && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.allTasks')}</CardTitle>
+                <CardDescription>
+                  {completedAllTasks} {t('common.of')} {allTasksFormatted.length} {t('dashboard.completedTasks')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Progress value={allTasksProgress} className="h-2" />
+                <div className="space-y-1 max-h-[240px] overflow-y-auto">
+                  {allTasksFormatted.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      {t('dashboard.noTasks')}
+                    </p>
+                  ) : (
+                    allTasksFormatted.map(task => (
                       <TaskItem key={task.id} task={task} />
                     ))
                   )}

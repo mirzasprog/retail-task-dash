@@ -44,7 +44,9 @@
     "dailyTasks": "Daily Tasks",
     "completedOf": "of",
     "completedTasks": "completed",
-    "viewAllTasks": "View All Tasks"
+    "viewAllTasks": "View All Tasks",
+    "allTasks": "All Tasks",
+    "noTasks": "No tasks for this store"
   },
   "myDay": {
     "title": "My Day",

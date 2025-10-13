@@ -44,7 +44,9 @@
     "dailyTasks": "Dnevni zadaci",
     "completedOf": "od",
     "completedTasks": "završeno",
-    "viewAllTasks": "Pogledaj sve zadatke"
+    "viewAllTasks": "Pogledaj sve zadatke",
+    "allTasks": "Svi zadaci",
+    "noTasks": "Nema zadataka za ovu trgovinu"
   },
   "myDay": {
     "title": "Moj dan",
