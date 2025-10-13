@@ -317,55 +317,46 @@ const Dashboard = () => {
   const monthlySalesData = generateMonthlySales();
   const totalMonthlySales = monthlySalesData.reduce((sum, day) => sum + day.sales, 0);
 
-  // Generate current week vs same week last year data
-  const generateWeeklySalesComparison = (storeMultiplier: number) => {
+  // Generate current month vs same month last year data
+  const generateMonthlySalesComparison = (storeMultiplier: number) => {
     const today = new Date();
-    const currentDayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const currentDay = today.getDate();
     
-    // Get Monday of current week
-    const mondayThisWeek = new Date(today);
-    mondayThisWeek.setDate(today.getDate() + mondayOffset);
-    mondayThisWeek.setHours(0, 0, 0, 0);
+    const monthData = [];
     
-    const weekData = [];
-    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    
-    for (let i = 0; i < 7; i++) {
-      const currentDate = new Date(mondayThisWeek);
-      currentDate.setDate(mondayThisWeek.getDate() + i);
+    for (let day = 1; day <= currentDay; day++) {
+      const currentDate = new Date(year, month, day);
+      const dayOfWeek = currentDate.getDay();
       
       // Same date last year
-      const lastYearDate = new Date(currentDate);
-      lastYearDate.setFullYear(currentDate.getFullYear() - 1);
-      
-      // Only show data up to today
-      const isInFuture = currentDate > today;
+      const lastYearDate = new Date(year - 1, month, day);
       
       // Base amount varies by store
       const baseAmount = 12000 * storeMultiplier;
       
-      // Add variation and weekend boost
-      const variation = Math.sin(i) * 0.1; // -10% to +10%
-      const weekendBoost = (i >= 5) ? 1.25 : 1; // Sat & Sun boost
+      // Add variation based on day
+      const variation = Math.sin(day / 5) * 0.15; // -15% to +15%
+      const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 1.25 : 1;
       
       // Current year sales (lower than last year)
-      const currentYearSales = isInFuture ? null : Math.round(baseAmount * 0.85 * (1 + variation) * weekendBoost);
+      const currentYearSales = Math.round(baseAmount * 0.85 * (1 + variation) * weekendBoost);
       
       // Last year sales (higher - performing better)
-      const lastYearVariation = Math.sin(i + 1) * 0.08;
+      const lastYearVariation = Math.sin((day + 3) / 5) * 0.12;
       const lastYearSales = Math.round(baseAmount * 1.05 * (1 + lastYearVariation) * weekendBoost);
       
-      weekData.push({
-        name: dayNames[i],
+      monthData.push({
+        name: day.toString(),
+        day: day,
         fullDate: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         currentYear: currentYearSales,
         lastYear: lastYearSales,
-        isInFuture
       });
     }
     
-    return weekData;
+    return monthData;
   };
 
   // Dynamic data based on selected store
@@ -379,7 +370,7 @@ const Dashboard = () => {
         { title: t('dashboard.queueTime'), value: "2.3 min", change: -15.2, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
         { title: t('dashboard.fruitsVegShare'), value: "20.2%", change: 1.5, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
-      sales: generateWeeklySalesComparison(1.0)
+      sales: generateMonthlySalesComparison(1.0)
     },
     "store-2": {
       kpis: [
@@ -390,7 +381,7 @@ const Dashboard = () => {
         { title: t('dashboard.queueTime'), value: "3.1 min", change: 8.5, icon: <Clock className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
         { title: t('dashboard.fruitsVegShare'), value: "18.5%", change: -0.8, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
-      sales: generateWeeklySalesComparison(0.82)
+      sales: generateMonthlySalesComparison(0.82)
     },
     "store-3": {
       kpis: [
@@ -401,7 +392,7 @@ const Dashboard = () => {
         { title: t('dashboard.queueTime'), value: "1.8 min", change: -22.3, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
         { title: t('dashboard.fruitsVegShare'), value: "22.1%", change: 2.3, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
-      sales: generateWeeklySalesComparison(1.27)
+      sales: generateMonthlySalesComparison(1.27)
     }
   };
 
@@ -481,8 +472,8 @@ const Dashboard = () => {
           {/* Sales Trend Chart */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>{t('dashboard.weeklySalesTrend')}</CardTitle>
-              <CardDescription>{t('dashboard.currentWeekComparison')}</CardDescription>
+              <CardTitle>{t('dashboard.monthlySalesTrend')}</CardTitle>
+              <CardDescription>{t('dashboard.currentMonthComparison')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -491,6 +482,7 @@ const Dashboard = () => {
                   <XAxis 
                     dataKey="name" 
                     stroke="hsl(var(--foreground))"
+                    label={{ value: t('dashboard.dayOfMonth'), position: 'insideBottom', offset: -5 }}
                   />
                   <YAxis stroke="hsl(var(--foreground))" />
                   <Tooltip 
@@ -502,7 +494,7 @@ const Dashboard = () => {
                     formatter={(value: any) => value ? `€${value.toLocaleString()}` : 'N/A'}
                     labelFormatter={(label, payload) => {
                       if (payload && payload[0]) {
-                        return `${label} - ${payload[0].payload.fullDate}`;
+                        return payload[0].payload.fullDate;
                       }
                       return label;
                     }}
@@ -513,8 +505,7 @@ const Dashboard = () => {
                     stroke="hsl(var(--primary))" 
                     strokeWidth={2}
                     name={new Date().getFullYear().toString()}
-                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
-                    connectNulls={false}
+                    dot={{ fill: 'hsl(var(--primary))', r: 3 }}
                   />
                   <Line 
                     type="monotone" 
@@ -523,7 +514,7 @@ const Dashboard = () => {
                     strokeWidth={2}
                     strokeDasharray="5 5"
                     name={(new Date().getFullYear() - 1).toString()}
-                    dot={{ fill: 'hsl(var(--muted-foreground))', r: 4 }}
+                    dot={{ fill: 'hsl(var(--muted-foreground))', r: 3 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
