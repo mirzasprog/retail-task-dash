@@ -349,12 +349,12 @@ const Dashboard = () => {
       const variation = Math.sin(i) * 0.1; // -10% to +10%
       const weekendBoost = (i >= 5) ? 1.25 : 1; // Sat & Sun boost
       
-      // Current year sales
-      const currentYearSales = isInFuture ? null : Math.round(baseAmount * (1 + variation) * weekendBoost);
+      // Current year sales (lower than last year)
+      const currentYearSales = isInFuture ? null : Math.round(baseAmount * 0.85 * (1 + variation) * weekendBoost);
       
-      // Last year sales (slightly lower on average)
-      const lastYearVariation = Math.sin(i + 1) * 0.12;
-      const lastYearSales = Math.round(baseAmount * 0.92 * (1 + lastYearVariation) * weekendBoost);
+      // Last year sales (higher - performing better)
+      const lastYearVariation = Math.sin(i + 1) * 0.08;
+      const lastYearSales = Math.round(baseAmount * 1.05 * (1 + lastYearVariation) * weekendBoost);
       
       weekData.push({
         name: dayNames[i],
