@@ -317,6 +317,57 @@ const Dashboard = () => {
   const monthlySalesData = generateMonthlySales();
   const totalMonthlySales = monthlySalesData.reduce((sum, day) => sum + day.sales, 0);
 
+  // Generate current week vs same week last year data
+  const generateWeeklySalesComparison = (storeMultiplier: number) => {
+    const today = new Date();
+    const currentDayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+    
+    // Get Monday of current week
+    const mondayThisWeek = new Date(today);
+    mondayThisWeek.setDate(today.getDate() + mondayOffset);
+    mondayThisWeek.setHours(0, 0, 0, 0);
+    
+    const weekData = [];
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(mondayThisWeek);
+      currentDate.setDate(mondayThisWeek.getDate() + i);
+      
+      // Same date last year
+      const lastYearDate = new Date(currentDate);
+      lastYearDate.setFullYear(currentDate.getFullYear() - 1);
+      
+      // Only show data up to today
+      const isInFuture = currentDate > today;
+      
+      // Base amount varies by store
+      const baseAmount = 12000 * storeMultiplier;
+      
+      // Add variation and weekend boost
+      const variation = Math.sin(i) * 0.1; // -10% to +10%
+      const weekendBoost = (i >= 5) ? 1.25 : 1; // Sat & Sun boost
+      
+      // Current year sales
+      const currentYearSales = isInFuture ? null : Math.round(baseAmount * (1 + variation) * weekendBoost);
+      
+      // Last year sales (slightly lower on average)
+      const lastYearVariation = Math.sin(i + 1) * 0.12;
+      const lastYearSales = Math.round(baseAmount * 0.92 * (1 + lastYearVariation) * weekendBoost);
+      
+      weekData.push({
+        name: dayNames[i],
+        fullDate: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        currentYear: currentYearSales,
+        lastYear: lastYearSales,
+        isInFuture
+      });
+    }
+    
+    return weekData;
+  };
+
   // Dynamic data based on selected store
   const storeDataMap: { [key: string]: any } = {
     "store-1": {
@@ -328,15 +379,7 @@ const Dashboard = () => {
         { title: t('dashboard.queueTime'), value: "2.3 min", change: -15.2, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
         { title: t('dashboard.fruitsVegShare'), value: "20.2%", change: 1.5, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
-      sales: [
-        { name: 'Mon', sales: 11200 },
-        { name: 'Tue', sales: 10800 },
-        { name: 'Wed', sales: 12100 },
-        { name: 'Thu', sales: 11900 },
-        { name: 'Fri', sales: 13400 },
-        { name: 'Sat', sales: 15200 },
-        { name: 'Sun', sales: 12345 },
-      ]
+      sales: generateWeeklySalesComparison(1.0)
     },
     "store-2": {
       kpis: [
@@ -347,15 +390,7 @@ const Dashboard = () => {
         { title: t('dashboard.queueTime'), value: "3.1 min", change: 8.5, icon: <Clock className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
         { title: t('dashboard.fruitsVegShare'), value: "18.5%", change: -0.8, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
-      sales: [
-        { name: 'Mon', sales: 9200 },
-        { name: 'Tue', sales: 9500 },
-        { name: 'Wed', sales: 10100 },
-        { name: 'Thu', sales: 9800 },
-        { name: 'Fri', sales: 11200 },
-        { name: 'Sat', sales: 12400 },
-        { name: 'Sun', sales: 9876 },
-      ]
+      sales: generateWeeklySalesComparison(0.82)
     },
     "store-3": {
       kpis: [
@@ -366,15 +401,7 @@ const Dashboard = () => {
         { title: t('dashboard.queueTime'), value: "1.8 min", change: -22.3, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
         { title: t('dashboard.fruitsVegShare'), value: "22.1%", change: 2.3, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
       ],
-      sales: [
-        { name: 'Mon', sales: 14200 },
-        { name: 'Tue', sales: 13800 },
-        { name: 'Wed', sales: 15100 },
-        { name: 'Thu', sales: 14900 },
-        { name: 'Fri', sales: 16400 },
-        { name: 'Sat', sales: 17800 },
-        { name: 'Sun', sales: 15234 },
-      ]
+      sales: generateWeeklySalesComparison(1.27)
     }
   };
 
@@ -455,24 +482,61 @@ const Dashboard = () => {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>{t('dashboard.weeklySalesTrend')}</CardTitle>
-              <CardDescription>{t('dashboard.last7Days')}</CardDescription>
+              <CardDescription>{t('dashboard.currentWeekComparison')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={salesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="hsl(var(--foreground))"
+                  />
+                  <YAxis stroke="hsl(var(--foreground))" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '6px'
+                    }}
+                    formatter={(value: any) => value ? `€${value.toLocaleString()}` : 'N/A'}
+                    labelFormatter={(label, payload) => {
+                      if (payload && payload[0]) {
+                        return `${label} - ${payload[0].payload.fullDate}`;
+                      }
+                      return label;
+                    }}
+                  />
                   <Line 
                     type="monotone" 
-                    dataKey="sales" 
+                    dataKey="currentYear" 
                     stroke="hsl(var(--primary))" 
                     strokeWidth={2}
-                    dot={{ fill: 'hsl(var(--primary))' }}
+                    name={new Date().getFullYear().toString()}
+                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                    connectNulls={false}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="lastYear" 
+                    stroke="hsl(var(--muted-foreground))" 
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name={(new Date().getFullYear() - 1).toString()}
+                    dot={{ fill: 'hsl(var(--muted-foreground))', r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
+              <div className="flex items-center justify-center gap-6 mt-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-0.5 bg-primary"></div>
+                  <span>{new Date().getFullYear()}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-0.5 bg-muted-foreground" style={{ backgroundImage: 'repeating-linear-gradient(to right, hsl(var(--muted-foreground)) 0, hsl(var(--muted-foreground)) 5px, transparent 5px, transparent 10px)' }}></div>
+                  <span className="text-muted-foreground">{new Date().getFullYear() - 1}</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
