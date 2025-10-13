@@ -6,9 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {
   const { resetPassword } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,14 +33,14 @@ export default function ForgotPassword() {
       <div className="w-full max-width-md space-y-8">
         <div className="text-center">
           <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-primary" />
-          <h1 className="text-3xl font-bold">Forgot Password</h1>
+          <h1 className="text-3xl font-bold">{t('forgotPassword.title')}</h1>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Reset Your Password</CardTitle>
+            <CardTitle>{t('forgotPassword.resetYourPassword')}</CardTitle>
             <CardDescription>
-              Enter your email address and we'll send you a reset link
+              {t('forgotPassword.enterEmail')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -46,19 +48,19 @@ export default function ForgotPassword() {
               <div className="space-y-2">
                 <Input
                   type="email"
-                  placeholder="Email"
+                  placeholder={t('forgotPassword.email')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Sending..." : "Send Reset Link"}
+                {isLoading ? t('forgotPassword.sending') : t('forgotPassword.sendResetLink')}
               </Button>
               <Link to="/auth">
                 <Button type="button" variant="ghost" className="w-full">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Login
+                  {t('forgotPassword.backToLogin')}
                 </Button>
               </Link>
             </form>

@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, Plus, Calendar, Clock, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -34,18 +35,10 @@ interface TaskTemplate {
 }
 
 const DAYS_OF_WEEK = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-const DAY_LABELS = {
-  MON: 'Monday',
-  TUE: 'Tuesday',
-  WED: 'Wednesday',
-  THU: 'Thursday',
-  FRI: 'Friday',
-  SAT: 'Saturday',
-  SUN: 'Sunday'
-};
 
 const TaskTemplates = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
   const [templates, setTemplates] = useState<TaskTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +72,7 @@ const TaskTemplates = () => {
       setTemplates((data as any) || []);
     } catch (error) {
       console.error('Error fetching templates:', error);
-      toast.error('Failed to load templates');
+      toast.error(t('errors.failedToLoadTemplates'));
     } finally {
       setLoading(false);
     }
@@ -102,14 +95,14 @@ const TaskTemplates = () => {
           .eq('id', editingTemplate.id);
 
         if (error) throw error;
-        toast.success('Template updated!');
+        toast.success(t('success.templateUpdated'));
       } else {
         const { error } = await supabase
           .from('task_templates')
           .insert([templateData]);
 
         if (error) throw error;
-        toast.success('Template created!');
+        toast.success(t('success.templateCreated'));
       }
 
       setShowDialog(false);
@@ -118,12 +111,12 @@ const TaskTemplates = () => {
       await fetchTemplates();
     } catch (error) {
       console.error('Error saving template:', error);
-      toast.error('Failed to save template');
+      toast.error(t('errors.failedToSaveTemplate'));
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this template?')) return;
+    if (!confirm(t('taskTemplates.deleteConfirm'))) return;
 
     try {
       const { error } = await supabase
@@ -132,11 +125,11 @@ const TaskTemplates = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Template deleted!');
+      toast.success(t('success.templateDeleted'));
       await fetchTemplates();
     } catch (error) {
       console.error('Error deleting template:', error);
-      toast.error('Failed to delete template');
+      toast.error(t('errors.failedToDeleteTemplate'));
     }
   };
 
@@ -190,11 +183,11 @@ const TaskTemplates = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>Access Restricted</CardTitle>
+            <CardTitle>{t('taskTemplates.accessRestricted')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Task templates can only be managed by HQ administrators.
+              {t('taskTemplates.hqOnly')}
             </p>
           </CardContent>
         </Card>
@@ -209,16 +202,16 @@ const TaskTemplates = () => {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Calendar className="h-8 w-8 text-primary" />
-              Task Templates
+              {t('taskTemplates.title')}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Manage recurring task templates for all stores
+              {t('taskTemplates.subtitle')}
             </p>
           </div>
 
           <Button onClick={() => { resetForm(); setShowDialog(true); }}>
             <Plus className="h-4 w-4 mr-2" />
-            New Template
+            {t('taskTemplates.newTemplate')}
           </Button>
         </div>
 
@@ -236,11 +229,12 @@ const TaskTemplates = () => {
                     )}
                   </div>
                   <Badge variant={
+                    template.priority === 'critical' ? 'destructive' :
                     template.priority === 'high' ? 'destructive' :
                     template.priority === 'medium' ? 'secondary' :
                     'outline'
                   }>
-                    {template.priority}
+                    {t(`tasks.${template.priority}`)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -262,10 +256,10 @@ const TaskTemplates = () => {
 
                 <div className="flex gap-2 text-xs">
                   {template.requires_image && (
-                    <Badge variant="secondary">Photo Required</Badge>
+                    <Badge variant="secondary">{t('taskTemplates.photoRequired')}</Badge>
                   )}
                   {template.requires_gps && (
-                    <Badge variant="secondary">GPS Required</Badge>
+                    <Badge variant="secondary">{t('taskTemplates.gpsRequired')}</Badge>
                   )}
                 </div>
 
@@ -277,7 +271,7 @@ const TaskTemplates = () => {
                     className="flex-1"
                   >
                     <Edit2 className="h-3 w-3 mr-1" />
-                    Edit
+                    {t('common.edit')}
                   </Button>
                   <Button
                     variant="outline"
@@ -286,7 +280,7 @@ const TaskTemplates = () => {
                     className="flex-1"
                   >
                     <Trash2 className="h-3 w-3 mr-1" />
-                    Delete
+                    {t('common.delete')}
                   </Button>
                 </div>
               </CardContent>
@@ -299,7 +293,7 @@ const TaskTemplates = () => {
             <CardContent className="py-12 text-center">
               <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
-                No task templates yet. Create your first template.
+                {t('taskTemplates.noTemplates')}
               </p>
             </CardContent>
           </Card>
@@ -310,20 +304,20 @@ const TaskTemplates = () => {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingTemplate ? 'Edit' : 'Create'} Task Template
+              {editingTemplate ? t('taskTemplates.editTemplate') : t('taskTemplates.createTemplate')}
             </DialogTitle>
             <DialogDescription>
-              Configure recurring task template
+              {t('taskTemplates.configureRecurring')}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Title *</label>
+              <label className="text-sm font-medium">{t('taskTemplates.titleLabel')}</label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="e.g., Morning Opening Checklist"
+                placeholder={t('taskTemplates.titlePlaceholder')}
                 required
               />
             </div>
@@ -396,7 +390,7 @@ const TaskTemplates = () => {
                         id={day}
                       />
                       <label htmlFor={day} className="text-sm cursor-pointer">
-                        {DAY_LABELS[day as keyof typeof DAY_LABELS]}
+                        {t(`taskTemplates.${day.toLowerCase()}`)}
                       </label>
                     </div>
                   ))}

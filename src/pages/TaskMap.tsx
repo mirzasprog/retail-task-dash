@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, MapPin, Camera } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface TaskWithLocation {
   id: string;
@@ -26,6 +27,7 @@ interface TaskWithLocation {
 
 const TaskMap = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [tasks, setTasks] = useState<TaskWithLocation[]>([]);
@@ -65,7 +67,7 @@ const TaskMap = () => {
       setTasks(data as any || []);
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      toast.error('Failed to load tasks');
+      toast.error(t('errors.failedToLoadTasks'));
     } finally {
       setLoading(false);
     }
@@ -133,7 +135,7 @@ const TaskMap = () => {
             <h3 style="font-weight: bold; margin-bottom: 4px;">${task.title}</h3>
             <p style="font-size: 12px; color: #666;">${task.stores.name}</p>
             <p style="font-size: 12px; margin-top: 4px;">
-              Status: <strong>${task.status}</strong>
+              ${t('taskMap.status')}: <strong>${task.status}</strong>
             </p>
           </div>
         `);
@@ -185,14 +187,14 @@ const TaskMap = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>Mapbox Token Required</CardTitle>
+            <CardTitle>{t('taskMap.mapboxTokenRequired')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
-              Please add your Mapbox public token to the Supabase secrets to enable the map.
+              {t('taskMap.mapboxTokenMessage')}
             </p>
             <p className="text-sm text-muted-foreground">
-              Get your token from: <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline">mapbox.com</a>
+              {t('taskMap.getTokenFrom')} <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline">mapbox.com</a>
             </p>
           </CardContent>
         </Card>
@@ -209,19 +211,19 @@ const TaskMap = () => {
           
           {/* Legend */}
           <div className="absolute top-4 left-4 bg-background border rounded-lg p-4 shadow-lg">
-            <h3 className="font-semibold mb-2">Legend</h3>
+            <h3 className="font-semibold mb-2">{t('taskMap.legend')}</h3>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">✓</div>
-                <span>Completed</span>
+                <span>{t('taskMap.completed')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs">⋯</div>
-                <span>In Progress</span>
+                <span>{t('taskMap.inProgress')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">!</div>
-                <span>Not Started</span>
+                <span>{t('taskMap.notStarted')}</span>
               </div>
             </div>
           </div>
@@ -231,7 +233,7 @@ const TaskMap = () => {
         <div className="w-96 border-l bg-background overflow-y-auto p-6">
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
             <MapPin className="h-6 w-6 text-primary" />
-            Task Locations
+            {t('taskMap.title')}
           </h2>
 
           {selectedTask && (
@@ -269,7 +271,7 @@ const TaskMap = () => {
                 {!selectedTask.image_url && (
                   <div className="bg-muted rounded-lg p-8 text-center">
                     <Camera className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No photo evidence</p>
+                    <p className="text-sm text-muted-foreground">{t('taskMap.noPhotoEvidence')}</p>
                   </div>
                 )}
               </CardContent>
@@ -277,7 +279,7 @@ const TaskMap = () => {
           )}
 
           <div className="space-y-3">
-            <h3 className="font-semibold">All Tasks ({tasks.length})</h3>
+            <h3 className="font-semibold">{t('taskMap.allTasks', { count: tasks.length })}</h3>
             {tasks.map(task => (
               <Card 
                 key={task.id}

@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export default function ResetPassword() {
   const { updatePassword } = useAuth();
+  const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -16,12 +18,12 @@ export default function ResetPassword() {
     e.preventDefault();
     
     if (newPassword !== confirmPassword) {
-      toast.error("Passwords don't match");
+      toast.error(t('errors.passwordsDoNotMatch'));
       return;
     }
 
     if (newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters");
+      toast.error(t('errors.passwordTooShort'));
       return;
     }
 
@@ -40,14 +42,14 @@ export default function ResetPassword() {
       <div className="w-full max-width-md space-y-8">
         <div className="text-center">
           <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-primary" />
-          <h1 className="text-3xl font-bold">Reset Password</h1>
+          <h1 className="text-3xl font-bold">{t('resetPassword.title')}</h1>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Set New Password</CardTitle>
+            <CardTitle>{t('resetPassword.setNewPassword')}</CardTitle>
             <CardDescription>
-              Enter your new password below
+              {t('resetPassword.enterNewPassword')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -55,7 +57,7 @@ export default function ResetPassword() {
               <div className="space-y-2">
                 <Input
                   type="password"
-                  placeholder="New Password"
+                  placeholder={t('resetPassword.newPassword')}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -65,7 +67,7 @@ export default function ResetPassword() {
               <div className="space-y-2">
                 <Input
                   type="password"
-                  placeholder="Confirm Password"
+                  placeholder={t('resetPassword.confirmPassword')}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -73,7 +75,7 @@ export default function ResetPassword() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Updating..." : "Update Password"}
+                {isLoading ? t('resetPassword.updating') : t('resetPassword.updatePassword')}
               </Button>
             </form>
           </CardContent>

@@ -91,9 +91,9 @@ const PriceChecker = () => {
         {/* Upload Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Upload Price Label</CardTitle>
+            <CardTitle>{t('priceChecker.uploadTitle')}</CardTitle>
             <CardDescription>
-              Take a photo or upload an image of a price label
+              {t('priceChecker.uploadDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -115,7 +115,7 @@ const PriceChecker = () => {
                     <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   )}
                   <p className="text-sm text-muted-foreground">
-                    {checking ? 'Processing image...' : 'Click or tap to upload/capture image'}
+                    {checking ? t('priceChecker.processingImage') : t('priceChecker.clickToUpload')}
                   </p>
                 </div>
               </label>
@@ -139,17 +139,17 @@ const PriceChecker = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Verification Result</CardTitle>
+                <CardTitle>{t('priceChecker.verificationResult')}</CardTitle>
                 <Badge variant={result.match ? 'default' : 'destructive'}>
                   {result.match ? (
                     <>
                       <CheckCircle2 className="h-4 w-4 mr-1" />
-                      Match
+                      {t('priceChecker.match')}
                     </>
                   ) : (
                     <>
                       <AlertTriangle className="h-4 w-4 mr-1" />
-                      Mismatch
+                      {t('priceChecker.mismatch')}
                     </>
                   )}
                 </Badge>
@@ -158,19 +158,19 @@ const PriceChecker = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">SKU</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('priceChecker.sku')}</p>
                   <p className="text-lg font-semibold">
-                    {result.sku || 'Not detected'}
+                    {result.sku || t('priceChecker.notDetected')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Confidence</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('priceChecker.confidence')}</p>
                   <Badge variant={
                     result.confidence === 'high' ? 'default' :
                     result.confidence === 'medium' ? 'secondary' :
                     'outline'
                   }>
-                    {result.confidence}
+                    {t(`priceChecker.${result.confidence}`)}
                   </Badge>
                 </div>
               </div>
@@ -178,7 +178,7 @@ const PriceChecker = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm font-medium text-muted-foreground mb-1">
-                    Extracted Price
+                    {t('priceChecker.extractedPrice')}
                   </p>
                   <p className="text-2xl font-bold">
                     {result.extractedPrice !== null ? `€${result.extractedPrice.toFixed(2)}` : 'N/A'}
@@ -186,7 +186,7 @@ const PriceChecker = () => {
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm font-medium text-muted-foreground mb-1">
-                    Expected Price
+                    {t('priceChecker.expectedPrice')}
                   </p>
                   <p className="text-2xl font-bold">
                     {result.expectedPrice !== null ? `€${result.expectedPrice.toFixed(2)}` : 'N/A'}
@@ -197,18 +197,18 @@ const PriceChecker = () => {
               {!result.match && result.expectedPrice !== null && result.extractedPrice !== null && (
                 <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
                   <p className="text-sm font-medium text-destructive mb-1">
-                    ⚠️ Price Discrepancy Detected
+                    {t('priceChecker.priceDiscrepancy')}
                   </p>
                   <p className="text-sm text-destructive/80">
-                    Difference: €{Math.abs(result.extractedPrice - result.expectedPrice).toFixed(2)}
+                    {t('priceChecker.difference')}: €{Math.abs(result.extractedPrice - result.expectedPrice).toFixed(2)}
                   </p>
                 </div>
               )}
 
               <div className="bg-muted p-4 rounded-lg">
-                <p className="text-sm font-medium mb-2">Raw OCR Text:</p>
+                <p className="text-sm font-medium mb-2">{t('priceChecker.rawOCRText')}</p>
                 <code className="text-xs bg-background p-2 rounded block">
-                  {result.rawText || 'No text extracted'}
+                  {result.rawText || t('priceChecker.noTextExtracted')}
                 </code>
               </div>
             </CardContent>
@@ -218,14 +218,14 @@ const PriceChecker = () => {
         {/* Instructions */}
         <Card>
           <CardHeader>
-            <CardTitle>Tips for Best Results</CardTitle>
+            <CardTitle>{t('priceChecker.tipsTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>• Ensure the label is well-lit and in focus</li>
-              <li>• Capture the entire price label in the frame</li>
-              <li>• Avoid glare and shadows on the label</li>
-              <li>• Hold the camera steady when capturing</li>
+              <li>{t('priceChecker.tip1')}</li>
+              <li>{t('priceChecker.tip2')}</li>
+              <li>{t('priceChecker.tip3')}</li>
+              <li>{t('priceChecker.tip4')}</li>
             </ul>
           </CardContent>
         </Card>

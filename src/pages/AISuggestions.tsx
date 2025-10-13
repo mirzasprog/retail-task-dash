@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Sparkles, CheckCircle2, XCircle, Info, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface AISuggestion {
   id: string;
@@ -27,6 +28,7 @@ interface TaskSuggestion {
 
 const AISuggestions = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +71,7 @@ const AISuggestions = () => {
 
   const generateSuggestions = async () => {
     if (!selectedStore) {
-      toast.error('Please select a store');
+      toast.error(t('errors.selectStore'));
       return;
     }
 
@@ -81,11 +83,11 @@ const AISuggestions = () => {
 
       if (error) throw error;
 
-      toast.success(`Generated ${data.length} AI suggestions!`);
+      toast.success(t('success.suggestionsGenerated', { count: data.length }));
       await fetchSuggestions();
     } catch (error) {
       console.error('Error generating suggestions:', error);
-      toast.error('Failed to generate suggestions');
+      toast.error(t('errors.failedToGenerateSuggestions'));
     } finally {
       setGenerating(false);
     }
@@ -117,11 +119,11 @@ const AISuggestions = () => {
 
       if (updateError) throw updateError;
 
-      toast.success('Suggestion approved and task created!');
+      toast.success(t('success.suggestionApproved'));
       await fetchSuggestions();
     } catch (error) {
       console.error('Error approving suggestion:', error);
-      toast.error('Failed to approve suggestion');
+      toast.error(t('errors.failedToApproveSuggestion'));
     }
   };
 
@@ -134,11 +136,11 @@ const AISuggestions = () => {
 
       if (error) throw error;
 
-      toast.success('Suggestion rejected');
+      toast.success(t('success.suggestionRejected'));
       await fetchSuggestions();
     } catch (error) {
       console.error('Error rejecting suggestion:', error);
-      toast.error('Failed to reject suggestion');
+      toast.error(t('errors.failedToRejectSuggestion'));
     }
   };
 
@@ -155,11 +157,11 @@ const AISuggestions = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>Access Restricted</CardTitle>
+            <CardTitle>{t('taskTemplates.accessRestricted')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              AI suggestions are only available for HQ administrators.
+              {t('aiSuggestions.aiOnly')}
             </p>
           </CardContent>
         </Card>
@@ -179,10 +181,10 @@ const AISuggestions = () => {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Sparkles className="h-8 w-8 text-primary" />
-              AI Task Suggestions
+              {t('aiSuggestions.title')}
             </h1>
             <p className="text-muted-foreground mt-1">
-              AI-powered recommendations based on trends and patterns
+              {t('aiSuggestions.subtitle')}
             </p>
           </div>
 
@@ -203,12 +205,12 @@ const AISuggestions = () => {
               {generating ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
+                  {t('aiSuggestions.generating')}
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Generate Suggestions
+                  {t('aiSuggestions.generateSuggestions')}
                 </>
               )}
             </Button>
@@ -220,19 +222,19 @@ const AISuggestions = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="text-2xl font-bold">{pendingSuggestions.length}</div>
-              <p className="text-sm text-muted-foreground">Pending Review</p>
+              <p className="text-sm text-muted-foreground">{t('aiSuggestions.pendingReview')}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-success">{approvedSuggestions.length}</div>
-              <p className="text-sm text-muted-foreground">Approved</p>
+              <p className="text-sm text-muted-foreground">{t('aiSuggestions.approved')}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-muted-foreground">{rejectedSuggestions.length}</div>
-              <p className="text-sm text-muted-foreground">Rejected</p>
+              <p className="text-sm text-muted-foreground">{t('aiSuggestions.rejected')}</p>
             </CardContent>
           </Card>
         </div>
@@ -240,7 +242,7 @@ const AISuggestions = () => {
         {/* Pending Suggestions */}
         {pendingSuggestions.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Pending Suggestions</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('aiSuggestions.pendingSuggestions')}</h2>
             <div className="space-y-4">
               {pendingSuggestions.map(suggestion => (
                 <Card key={suggestion.id}>
@@ -267,9 +269,9 @@ const AISuggestions = () => {
                       <div className="flex items-start gap-2">
                         <Info className="h-4 w-4 text-primary mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Why this was suggested:</p>
+                          <p className="text-sm font-medium mb-1">{t('aiSuggestions.whySuggested')}</p>
                           <p className="text-sm text-muted-foreground">
-                            {suggestion.rationale || 'Based on historical patterns and performance data'}
+                            {suggestion.rationale || t('aiSuggestions.basedOnPatterns')}
                           </p>
                         </div>
                       </div>
@@ -282,7 +284,7 @@ const AISuggestions = () => {
                         className="flex-1"
                       >
                         <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Approve & Create Task
+                        {t('aiSuggestions.approveAndCreate')}
                       </Button>
                       <Button
                         onClick={() => rejectSuggestion(suggestion.id)}
@@ -290,7 +292,7 @@ const AISuggestions = () => {
                         className="flex-1"
                       >
                         <XCircle className="h-4 w-4 mr-2" />
-                        Reject
+                        {t('aiSuggestions.reject')}
                       </Button>
                     </div>
                   </CardContent>
@@ -305,7 +307,7 @@ const AISuggestions = () => {
             <CardContent className="py-12 text-center">
               <Sparkles className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
-                No pending suggestions. Click "Generate Suggestions" to get AI-powered recommendations.
+                {t('aiSuggestions.noSuggestions')}
               </p>
             </CardContent>
           </Card>
