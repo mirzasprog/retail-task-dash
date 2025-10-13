@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Header } from "@/components/Header";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -175,8 +176,10 @@ const Dashboard = () => {
   const taskProgress = (completedTasks / tasks.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -249,6 +252,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
       </div>
     </div>
   );

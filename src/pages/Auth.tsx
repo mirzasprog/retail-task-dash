@@ -7,10 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const Auth = () => {
   const { signIn, signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,30 +64,33 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher />
+        </div>
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-lg">
             <ShoppingCart className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold">Retail Dashboard</h1>
-          <p className="text-muted-foreground mt-2">Manage your store operations efficiently</p>
+          <h1 className="text-3xl font-bold">{t('app.title')}</h1>
+          <p className="text-muted-foreground mt-2">{t('app.subtitle')}</p>
         </div>
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+            <TabsTrigger value="signup">{t('auth.signup')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="login">
             <Card>
               <CardHeader>
-                <CardTitle>Welcome back</CardTitle>
-                <CardDescription>Enter your credentials to access your dashboard</CardDescription>
+                <CardTitle>{t('auth.welcomeBack')}</CardTitle>
+                <CardDescription>{t('auth.loginDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
+                    <Label htmlFor="login-email">{t('auth.email')}</Label>
                     <Input 
                       id="login-email" 
                       name="email"
@@ -94,7 +100,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Password</Label>
+                    <Label htmlFor="login-password">{t('auth.password')}</Label>
                     <Input 
                       id="login-password"
                       name="password" 
@@ -103,11 +109,11 @@ const Auth = () => {
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Signing in...' : 'Sign In'}
+                    {isLoading ? t('auth.signingIn') : t('auth.signIn')}
                   </Button>
                   <div className="text-center mt-2">
                     <a href="/forgot-password" className="text-sm text-primary hover:underline">
-                      Forgot password?
+                      {t('auth.forgotPassword')}
                     </a>
                   </div>
                 </form>
@@ -118,13 +124,13 @@ const Auth = () => {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>Create an account</CardTitle>
-                <CardDescription>Enter your information to get started</CardDescription>
+                <CardTitle>{t('auth.createAccount')}</CardTitle>
+                <CardDescription>{t('auth.signupDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-fullname">Full Name</Label>
+                    <Label htmlFor="signup-fullname">{t('auth.fullName')}</Label>
                     <Input 
                       id="signup-fullname"
                       name="fullName" 
@@ -134,7 +140,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">{t('auth.email')}</Label>
                     <Input 
                       id="signup-email"
                       name="email" 
@@ -144,7 +150,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password">{t('auth.password')}</Label>
                     <Input 
                       id="signup-password"
                       name="password" 
@@ -153,7 +159,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Label htmlFor="confirm-password">{t('auth.confirmPassword')}</Label>
                     <Input 
                       id="confirm-password"
                       name="confirmPassword" 
@@ -162,7 +168,7 @@ const Auth = () => {
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Creating account...' : 'Create Account'}
+                    {isLoading ? t('auth.creatingAccount') : t('auth.createAccountButton')}
                   </Button>
                 </form>
               </CardContent>
@@ -171,7 +177,7 @@ const Auth = () => {
         </Tabs>
 
         <p className="text-center text-sm text-muted-foreground mt-4">
-          Create an account to get started with the retail dashboard
+          {t('auth.getStarted')}
         </p>
       </div>
     </div>

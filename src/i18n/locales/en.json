@@ -1,0 +1,60 @@
+{
+  "app": {
+    "title": "Retail Dashboard",
+    "subtitle": "Manage your store operations efficiently"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "signout": "Sign Out",
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create an account",
+    "loginDescription": "Enter your credentials to access your dashboard",
+    "signupDescription": "Enter your information to get started",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "forgotPassword": "Forgot password?",
+    "signingIn": "Signing in...",
+    "signIn": "Sign In",
+    "creatingAccount": "Creating account...",
+    "createAccountButton": "Create Account",
+    "getStarted": "Create an account to get started with the retail dashboard"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "overview": "Overview",
+    "myDay": "My Day",
+    "aiSuggestions": "AI Suggestions",
+    "priceChecker": "Price Checker",
+    "taskMap": "Task Map",
+    "taskTemplates": "Task Templates"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "myTasks": "My Tasks",
+    "allTasks": "All Tasks",
+    "status": "Status",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "assignedTo": "Assigned To",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "noData": "No data available"
+  }
+}

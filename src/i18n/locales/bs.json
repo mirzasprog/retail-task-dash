@@ -1,0 +1,60 @@
+{
+  "app": {
+    "title": "Retail Dashboard",
+    "subtitle": "Upravljajte poslovanjem vaše trgovine efikasno"
+  },
+  "auth": {
+    "login": "Prijava",
+    "signup": "Registracija",
+    "signout": "Odjava",
+    "welcomeBack": "Dobrodošli nazad",
+    "createAccount": "Kreirajte nalog",
+    "loginDescription": "Unesite svoje podatke za pristup kontrolnoj tabli",
+    "signupDescription": "Unesite svoje informacije da započnete",
+    "email": "Email",
+    "password": "Lozinka",
+    "confirmPassword": "Potvrdite lozinku",
+    "fullName": "Puno ime",
+    "forgotPassword": "Zaboravili ste lozinku?",
+    "signingIn": "Prijava u toku...",
+    "signIn": "Prijavite se",
+    "creatingAccount": "Kreiranje naloga...",
+    "createAccountButton": "Kreiraj nalog",
+    "getStarted": "Kreirajte nalog da započnete sa retail dashboard-om"
+  },
+  "dashboard": {
+    "title": "Kontrolna tabla",
+    "overview": "Pregled",
+    "myDay": "Moj dan",
+    "aiSuggestions": "AI sugestije",
+    "priceChecker": "Provjera cijena",
+    "taskMap": "Mapa zadataka",
+    "taskTemplates": "Predlošci zadataka"
+  },
+  "tasks": {
+    "title": "Zadaci",
+    "myTasks": "Moji zadaci",
+    "allTasks": "Svi zadaci",
+    "status": "Status",
+    "priority": "Prioritet",
+    "dueDate": "Rok",
+    "assignedTo": "Dodijeljeno",
+    "notStarted": "Nije započeto",
+    "inProgress": "U toku",
+    "completed": "Završeno",
+    "high": "Visok",
+    "medium": "Srednji",
+    "low": "Nizak"
+  },
+  "common": {
+    "save": "Spremi",
+    "cancel": "Otkaži",
+    "delete": "Obriši",
+    "edit": "Uredi",
+    "add": "Dodaj",
+    "search": "Pretraži",
+    "filter": "Filter",
+    "loading": "Učitavanje...",
+    "noData": "Nema dostupnih podataka"
+  }
+}
