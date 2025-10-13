@@ -26,7 +26,7 @@ const Auth = () => {
     try {
       await signIn(email, password);
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in");
+      toast.error(error.message || t('errors.failedToSignIn'));
     } finally {
       setIsLoading(false);
     }
@@ -44,18 +44,18 @@ const Auth = () => {
 
     try {
       if (!email || !password || !confirmPassword || !fullName) {
-        toast.error('Please fill in all fields');
+        toast.error(t('errors.fillAllFields'));
         return;
       }
 
       if (password !== confirmPassword) {
-        toast.error('Passwords do not match');
+        toast.error(t('errors.passwordsDoNotMatch'));
         return;
       }
 
       await signUp(email, password, fullName);
     } catch (error: any) {
-      toast.error(error.message || "Failed to create account");
+      toast.error(error.message || t('errors.failedToCreateAccount'));
     } finally {
       setIsLoading(false);
     }

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Camera, Loader2, CheckCircle2, AlertTriangle, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { checkPriceLabel, loadImage } from '@/lib/ocr';
+import { useTranslation } from 'react-i18next';
 
 interface PriceCheckResult {
   sku: string | null;
@@ -17,6 +18,7 @@ interface PriceCheckResult {
 }
 
 const PriceChecker = () => {
+  const { t } = useTranslation();
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<PriceCheckResult | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -35,7 +37,7 @@ const PriceChecker = () => {
 
     // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be less than 5MB');
+      toast.error(t('errors.imageTooLarge'));
       return;
     }
 
@@ -58,15 +60,15 @@ const PriceChecker = () => {
       setResult(checkResult);
 
       if (checkResult.match) {
-        toast.success('Price verified correctly!');
+        toast.success(t('success.priceVerified'));
       } else if (checkResult.sku && checkResult.expectedPrice !== null) {
-        toast.error('Price mismatch detected!');
+        toast.error(t('warnings.priceMismatch'));
       } else {
-        toast.warning('Could not verify price - please check manually');
+        toast.warning(t('warnings.couldNotVerifyPrice'));
       }
     } catch (error) {
       console.error('Error checking price:', error);
-      toast.error('Failed to process image');
+      toast.error(t('errors.failedToProcessImage'));
     } finally {
       setChecking(false);
     }
@@ -79,10 +81,10 @@ const PriceChecker = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Camera className="h-8 w-8 text-primary" />
-            Price Label Checker
+            {t('priceChecker.title')}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Upload a photo of a price label to verify accuracy
+            {t('priceChecker.subtitle')}
           </p>
         </div>
 
