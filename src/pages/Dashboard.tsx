@@ -123,6 +123,8 @@ const Dashboard = () => {
   const [showMonthlySales, setShowMonthlySales] = useState(false);
   const [showCategoryBreakdown, setShowCategoryBreakdown] = useState(false);
   const [categoryData, setCategoryData] = useState<Array<{ name: string; sales: number; percentage: number }>>([]);
+  const [kpiData, setKpiData] = useState<any[]>([]);
+  const [salesData, setSalesData] = useState<any[]>([]);
 
   useEffect(() => {
     if (user && !roleLoading) {
@@ -131,11 +133,15 @@ const Dashboard = () => {
   }, [user, roleLoading, isStoreManager, isHQAdmin]);
 
   useEffect(() => {
-    if (selectedStore && isStoreManager) {
-      fetchTodayTasks();
-    }
-    if (selectedStore && (isRegionalSupervisor || isHQAdmin)) {
-      fetchAllTasks();
+    if (selectedStore) {
+      if (isStoreManager) {
+        fetchTodayTasks();
+      }
+      if (isRegionalSupervisor || isHQAdmin) {
+        fetchAllTasks();
+      }
+      fetchKPIData();
+      fetchMonthlySalesData();
     }
   }, [selectedStore, isStoreManager, isRegionalSupervisor, isHQAdmin]);
 
@@ -224,6 +230,185 @@ const Dashboard = () => {
     }
   };
 
+  const fetchKPIData = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+      // Fetch today's KPIs
+      const { data: todayKPI, error: todayError } = await supabase
+        .from('kpis')
+        .select('*')
+        .eq('store_id', selectedStore)
+        .eq('date', today)
+        .maybeSingle();
+
+      // Fetch yesterday's KPIs for comparison
+      const { data: yesterdayKPI, error: yesterdayError } = await supabase
+        .from('kpis')
+        .select('*')
+        .eq('store_id', selectedStore)
+        .eq('date', yesterday)
+        .maybeSingle();
+
+      if (todayError || yesterdayError) {
+        console.error('Error fetching KPIs:', todayError || yesterdayError);
+        setKpiData([]);
+        return;
+      }
+
+      if (!todayKPI) {
+        setKpiData([]);
+        return;
+      }
+
+      // Calculate changes
+      const calculateChange = (today: number | null, yesterday: number | null) => {
+        if (!today || !yesterday || yesterday === 0) return 0;
+        return ((today - yesterday) / yesterday) * 100;
+      };
+
+      const salesChange = calculateChange(todayKPI.sales_amount, yesterdayKPI?.sales_amount);
+      const shrinkageChange = calculateChange(todayKPI.shrinkage_percent, yesterdayKPI?.shrinkage_percent);
+      const availabilityChange = calculateChange(todayKPI.availability_percent, yesterdayKPI?.availability_percent);
+      const scoChange = calculateChange(todayKPI.sco_uptime_percent, yesterdayKPI?.sco_uptime_percent);
+      const queueChange = calculateChange(todayKPI.queue_time_minutes, yesterdayKPI?.queue_time_minutes);
+
+      // Determine status based on values
+      const getSalesStatus = (shrinkage: number) => {
+        if (shrinkage < 1) return 'good';
+        if (shrinkage < 2) return 'warning';
+        return 'critical';
+      };
+
+      const getAvailabilityStatus = (availability: number) => {
+        if (availability >= 95) return 'good';
+        if (availability >= 90) return 'warning';
+        return 'critical';
+      };
+
+      const getQueueStatus = (queue: number) => {
+        if (queue <= 3) return 'good';
+        if (queue <= 5) return 'warning';
+        return 'critical';
+      };
+
+      const kpis = [
+        { 
+          title: t('dashboard.dailySales'), 
+          value: `€${todayKPI.sales_amount?.toLocaleString() || '0'}`, 
+          change: Math.abs(salesChange), 
+          icon: <DollarSign className="h-4 w-4" />, 
+          trend: salesChange >= 0 ? 'up' as const : 'down' as const, 
+          status: 'good' as const,
+          onClick: () => setShowMonthlySales(true)
+        },
+        { 
+          title: t('dashboard.shrinkage'), 
+          value: `${todayKPI.shrinkage_percent?.toFixed(1) || '0'}%`, 
+          change: Math.abs(shrinkageChange), 
+          icon: <AlertTriangle className="h-4 w-4" />, 
+          trend: shrinkageChange <= 0 ? 'down' as const : 'up' as const, 
+          status: getSalesStatus(todayKPI.shrinkage_percent || 0)
+        },
+        { 
+          title: t('dashboard.availability'), 
+          value: `${todayKPI.availability_percent?.toFixed(1) || '0'}%`, 
+          change: Math.abs(availabilityChange), 
+          icon: <Package className="h-4 w-4" />, 
+          trend: availabilityChange >= 0 ? 'up' as const : 'down' as const, 
+          status: getAvailabilityStatus(todayKPI.availability_percent || 0)
+        },
+        { 
+          title: t('dashboard.scoUptime'), 
+          value: `${todayKPI.sco_uptime_percent?.toFixed(1) || '0'}%`, 
+          change: Math.abs(scoChange), 
+          icon: <ShoppingCart className="h-4 w-4" />, 
+          trend: scoChange >= 0 ? 'up' as const : 'down' as const, 
+          status: getAvailabilityStatus(todayKPI.sco_uptime_percent || 0)
+        },
+        { 
+          title: t('dashboard.queueTime'), 
+          value: `${todayKPI.queue_time_minutes?.toFixed(1) || '0'} min`, 
+          change: Math.abs(queueChange), 
+          icon: <Clock className="h-4 w-4" />, 
+          trend: queueChange <= 0 ? 'down' as const : 'up' as const, 
+          status: getQueueStatus(todayKPI.queue_time_minutes || 0)
+        },
+      ];
+
+      setKpiData(kpis);
+    } catch (error) {
+      console.error('Error fetching KPI data:', error);
+      setKpiData([]);
+    }
+  };
+
+  const fetchMonthlySalesData = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const currentDay = today.getDate();
+
+      // Fetch current year data
+      const firstDayOfMonth = new Date(year, month, 1).toISOString().split('T')[0];
+      const todayStr = today.toISOString().split('T')[0];
+
+      const { data: currentYearData, error: currentError } = await supabase
+        .from('kpis')
+        .select('date, sales_amount')
+        .eq('store_id', selectedStore)
+        .gte('date', firstDayOfMonth)
+        .lte('date', todayStr)
+        .order('date');
+
+      // Fetch last year data for same period
+      const firstDayOfMonthLastYear = new Date(year - 1, month, 1).toISOString().split('T')[0];
+      const todayLastYear = new Date(year - 1, month, currentDay).toISOString().split('T')[0];
+
+      const { data: lastYearData, error: lastYearError } = await supabase
+        .from('kpis')
+        .select('date, sales_amount')
+        .eq('store_id', selectedStore)
+        .gte('date', firstDayOfMonthLastYear)
+        .lte('date', todayLastYear)
+        .order('date');
+
+      if (currentError || lastYearError) {
+        console.error('Error fetching sales data:', currentError || lastYearError);
+        setSalesData([]);
+        return;
+      }
+
+      // Map data by day
+      const currentYearMap = new Map(
+        (currentYearData || []).map(item => [new Date(item.date).getDate(), item.sales_amount])
+      );
+      const lastYearMap = new Map(
+        (lastYearData || []).map(item => [new Date(item.date).getDate(), item.sales_amount])
+      );
+
+      const salesComparison = Array.from({ length: currentDay }, (_, i) => {
+        const day = i + 1;
+        const date = new Date(year, month, day);
+        
+        return {
+          name: day.toString(),
+          day: day,
+          fullDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          currentYear: currentYearMap.get(day) || 0,
+          lastYear: lastYearMap.get(day) || 0,
+        };
+      });
+
+      setSalesData(salesComparison);
+    } catch (error) {
+      console.error('Error fetching monthly sales data:', error);
+      setSalesData([]);
+    }
+  };
+
   const fetchCategoryBreakdown = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -242,34 +427,12 @@ const Dashboard = () => {
 
       if (error) {
         console.error('Error fetching category sales:', error);
-        // Generate mock data for demonstration
-        const mockCategories = [
-          { name: 'Fruits and Vegetables', sales: 2500, percentage: 20.2 },
-          { name: 'Meat and Fish', sales: 2000, percentage: 16.2 },
-          { name: 'Dairy Products', sales: 1800, percentage: 14.6 },
-          { name: 'Bakery', sales: 1500, percentage: 12.1 },
-          { name: 'Beverages', sales: 1300, percentage: 10.5 },
-          { name: 'Snacks and Sweets', sales: 1100, percentage: 8.9 },
-          { name: 'Frozen Foods', sales: 900, percentage: 7.3 },
-          { name: 'Other', sales: 1245, percentage: 10.1 }
-        ];
-        setCategoryData(mockCategories);
+        setCategoryData([]);
         return;
       }
 
       if (!categorySales || categorySales.length === 0) {
-        // Generate mock data for demonstration
-        const mockCategories = [
-          { name: 'Fruits and Vegetables', sales: 2500, percentage: 20.2 },
-          { name: 'Meat and Fish', sales: 2000, percentage: 16.2 },
-          { name: 'Dairy Products', sales: 1800, percentage: 14.6 },
-          { name: 'Bakery', sales: 1500, percentage: 12.1 },
-          { name: 'Beverages', sales: 1300, percentage: 10.5 },
-          { name: 'Snacks and Sweets', sales: 1100, percentage: 8.9 },
-          { name: 'Frozen Foods', sales: 900, percentage: 7.3 },
-          { name: 'Other', sales: 1245, percentage: 10.1 }
-        ];
-        setCategoryData(mockCategories);
+        setCategoryData([]);
         return;
       }
 
@@ -286,118 +449,6 @@ const Dashboard = () => {
     }
   };
 
-  // Generate monthly sales data for current month
-  const generateMonthlySales = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const currentDay = now.getDate();
-    
-    const baseAmount = selectedStore === "store-1" ? 12000 : selectedStore === "store-2" ? 9500 : 15000;
-    
-    return Array.from({ length: currentDay }, (_, i) => {
-      const day = i + 1;
-      const date = new Date(year, month, day);
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-      const variation = Math.random() * 0.3 - 0.15; // -15% to +15%
-      const weekendBoost = dayName === 'Sat' || dayName === 'Sun' ? 1.2 : 1;
-      const amount = Math.round(baseAmount * (1 + variation) * weekendBoost);
-      
-      return {
-        day,
-        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        dayName,
-        sales: amount,
-        formattedSales: `€${amount.toLocaleString()}`
-      };
-    });
-  };
-
-  const monthlySalesData = generateMonthlySales();
-  const totalMonthlySales = monthlySalesData.reduce((sum, day) => sum + day.sales, 0);
-
-  // Generate current month vs same month last year data
-  const generateMonthlySalesComparison = (storeMultiplier: number) => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const currentDay = today.getDate();
-    
-    const monthData = [];
-    
-    for (let day = 1; day <= currentDay; day++) {
-      const currentDate = new Date(year, month, day);
-      const dayOfWeek = currentDate.getDay();
-      
-      // Same date last year
-      const lastYearDate = new Date(year - 1, month, day);
-      
-      // Base amount varies by store
-      const baseAmount = 12000 * storeMultiplier;
-      
-      // Add variation based on day
-      const variation = Math.sin(day / 5) * 0.15; // -15% to +15%
-      const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 1.25 : 1;
-      
-      // Current year sales (lower than last year)
-      const currentYearSales = Math.round(baseAmount * 0.85 * (1 + variation) * weekendBoost);
-      
-      // Last year sales (higher - performing better)
-      const lastYearVariation = Math.sin((day + 3) / 5) * 0.12;
-      const lastYearSales = Math.round(baseAmount * 1.05 * (1 + lastYearVariation) * weekendBoost);
-      
-      monthData.push({
-        name: day.toString(),
-        day: day,
-        fullDate: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        currentYear: currentYearSales,
-        lastYear: lastYearSales,
-      });
-    }
-    
-    return monthData;
-  };
-
-  // Dynamic data based on selected store
-  const storeDataMap: { [key: string]: any } = {
-    "store-1": {
-      kpis: [
-        { title: t('dashboard.dailySales'), value: "€12,345", change: 8.5, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => setShowMonthlySales(true) },
-        { title: t('dashboard.shrinkage'), value: "0.8%", change: -0.3, icon: <AlertTriangle className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
-        { title: t('dashboard.availability'), value: "96.2%", change: 2.1, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
-        { title: t('dashboard.scoUptime'), value: "98.5%", change: 1.2, icon: <ShoppingCart className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
-        { title: t('dashboard.queueTime'), value: "2.3 min", change: -15.2, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
-        { title: t('dashboard.fruitsVegShare'), value: "20.2%", change: 1.5, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
-      ],
-      sales: generateMonthlySalesComparison(1.0)
-    },
-    "store-2": {
-      kpis: [
-        { title: t('dashboard.dailySales'), value: "€9,876", change: 5.2, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => setShowMonthlySales(true) },
-        { title: t('dashboard.shrinkage'), value: "1.2%", change: 0.1, icon: <AlertTriangle className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
-        { title: t('dashboard.availability'), value: "94.8%", change: -1.3, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const },
-        { title: t('dashboard.scoUptime'), value: "96.2%", change: -2.1, icon: <ShoppingCart className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const },
-        { title: t('dashboard.queueTime'), value: "3.1 min", change: 8.5, icon: <Clock className="h-4 w-4" />, trend: 'up' as const, status: 'warning' as const },
-        { title: t('dashboard.fruitsVegShare'), value: "18.5%", change: -0.8, icon: <Package className="h-4 w-4" />, trend: 'down' as const, status: 'warning' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
-      ],
-      sales: generateMonthlySalesComparison(0.82)
-    },
-    "store-3": {
-      kpis: [
-        { title: t('dashboard.dailySales'), value: "€15,234", change: 12.8, icon: <DollarSign className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => setShowMonthlySales(true) },
-        { title: t('dashboard.shrinkage'), value: "0.5%", change: -0.5, icon: <AlertTriangle className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
-        { title: t('dashboard.availability'), value: "97.8%", change: 3.2, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
-        { title: t('dashboard.scoUptime'), value: "99.1%", change: 0.8, icon: <ShoppingCart className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const },
-        { title: t('dashboard.queueTime'), value: "1.8 min", change: -22.3, icon: <Clock className="h-4 w-4" />, trend: 'down' as const, status: 'good' as const },
-        { title: t('dashboard.fruitsVegShare'), value: "22.1%", change: 2.3, icon: <Package className="h-4 w-4" />, trend: 'up' as const, status: 'good' as const, onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); } },
-      ],
-      sales: generateMonthlySalesComparison(1.27)
-    }
-  };
-
-  const kpiData = storeDataMap[selectedStore]?.kpis || storeDataMap["store-1"].kpis;
-  const salesData = storeDataMap[selectedStore]?.sales || storeDataMap["store-1"].sales;
 
   // Map database tasks to UI format
   const tasks: Task[] = todayTasks.map(task => ({
@@ -599,7 +650,7 @@ const Dashboard = () => {
           <DialogHeader>
             <DialogTitle>{t('dashboard.monthlySalesBreakdown')}</DialogTitle>
             <DialogDescription>
-              {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Total: €{totalMonthlySales.toLocaleString()}
+              {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Total: €{salesData.reduce((sum, day) => sum + day.currentYear, 0).toLocaleString()}
             </DialogDescription>
           </DialogHeader>
           <Table>
@@ -607,15 +658,17 @@ const Dashboard = () => {
               <TableRow>
                 <TableHead>{t('dashboard.day')}</TableHead>
                 <TableHead>{t('dashboard.date')}</TableHead>
-                <TableHead className="text-right">{t('dashboard.sales')}</TableHead>
+                <TableHead className="text-right">{t('dashboard.currentYear')}</TableHead>
+                <TableHead className="text-right">{t('dashboard.lastYear')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {monthlySalesData.map((day) => (
+              {salesData.map((day) => (
                 <TableRow key={day.day}>
-                  <TableCell className="font-medium">{day.dayName}</TableCell>
-                  <TableCell>{day.date}</TableCell>
-                  <TableCell className="text-right font-semibold">{day.formattedSales}</TableCell>
+                  <TableCell className="font-medium">{day.day}</TableCell>
+                  <TableCell>{day.fullDate}</TableCell>
+                  <TableCell className="text-right font-semibold">€{day.currentYear.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">€{day.lastYear.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -46,6 +46,8 @@
     "currentWeekComparison": "Current week vs same week last year",
     "currentMonthComparison": "Current month vs same month last year",
     "dayOfMonth": "Day of Month",
+    "currentYear": "Current Year",
+    "lastYear": "Last Year",
     "dailyTasks": "Daily Tasks",
     "completedOf": "of",
     "completedTasks": "completed",
