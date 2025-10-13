@@ -58,11 +58,18 @@ const MyDay = () => {
       const today = format(new Date(), 'yyyy-MM-dd');
       
       // Fetch user's store_id from profile
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('store_id')
         .eq('id', user?.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Profile error:', profileError);
+        toast.error('Failed to load profile');
+        setLoading(false);
+        return;
+      }
 
       if (!profile?.store_id) {
         console.error('No store assigned to user');
@@ -80,7 +87,12 @@ const MyDay = () => {
         .order('priority', { ascending: false })
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Tasks error:', error);
+        throw error;
+      }
+      
+      console.log('Fetched tasks:', data);
       setTasks(data || []);
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -93,6 +105,8 @@ const MyDay = () => {
   const updateTaskStatus = async (taskId: string, newStatus: Task['status']) => {
     setUpdatingTask(taskId);
     try {
+      console.log('Updating task:', taskId, 'to status:', newStatus);
+      
       const updateData: any = {
         status: newStatus,
         updated_at: new Date().toISOString()
@@ -107,15 +121,21 @@ const MyDay = () => {
         updateData.comments = comments[taskId];
       }
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('tasks')
         .update(updateData)
-        .eq('id', taskId);
+        .eq('id', taskId)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Update error:', error);
+        throw error;
+      }
+
+      console.log('Task updated successfully:', data);
 
       // Log task history
-      await supabase.from('task_history').insert({
+      const { error: historyError } = await supabase.from('task_history').insert({
         task_id: taskId,
         user_id: user?.id,
         action: 'status_change',
@@ -124,17 +144,21 @@ const MyDay = () => {
         comments: comments[taskId] || null
       });
 
+      if (historyError) {
+        console.error('History error:', historyError);
+      }
+
       setTasks(tasks.map(t => 
         t.id === taskId 
           ? { ...t, status: newStatus, comments: comments[taskId] || t.comments }
           : t
       ));
 
-      toast.success(`Task ${newStatus === 'completed' ? 'completed' : 'updated'}!`);
+      toast.success(t(newStatus === 'completed' ? 'myDay.taskCompleted' : 'myDay.taskUpdated'));
       setComments({ ...comments, [taskId]: '' });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating task:', error);
-      toast.error('Failed to update task');
+      toast.error(error?.message || 'Failed to update task');
     } finally {
       setUpdatingTask(null);
     }

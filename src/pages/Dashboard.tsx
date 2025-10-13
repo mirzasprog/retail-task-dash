@@ -118,12 +118,15 @@ const Dashboard = () => {
 
   const fetchUserStores = async () => {
     try {
-      // Get user's profile to check their assigned store
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('store_id')
         .eq('id', user?.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+      }
 
       setUserStoreId(profile?.store_id || null);
 

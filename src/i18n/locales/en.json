@@ -50,6 +50,7 @@
     "progress": "Progress",
     "completed": "completed",
     "completeAll": "Complete All",
+    "taskUpdated": "Task updated!",
     "noTasksToday": "No tasks for today!",
     "accessRestricted": "Access Restricted",
     "storeManagerOnly": "This view is only available for store managers.",
