@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Header } from "@/components/Header";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -21,6 +22,7 @@ import {
   Clock3
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -105,6 +107,7 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { isStoreManager, isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
+  const navigate = useNavigate();
   const [selectedStore, setSelectedStore] = useState<string>("");
   const [availableStores, setAvailableStores] = useState<Array<{ id: string; name: string }>>([]);
   const [userStoreId, setUserStoreId] = useState<string | null>(null);
@@ -309,10 +312,17 @@ const Dashboard = () => {
           {/* Daily Tasks */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('dashboard.dailyTasks')}</CardTitle>
-              <CardDescription>
-                {completedTasks} {t('common.of')} {tasks.length} {t('dashboard.completedTasks')}
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>{t('dashboard.dailyTasks')}</CardTitle>
+                  <CardDescription>
+                    {completedTasks} {t('common.of')} {tasks.length} {t('dashboard.completedTasks')}
+                  </CardDescription>
+                </div>
+                <Button onClick={() => navigate('/my-day')} size="sm">
+                  {t('dashboard.viewAllTasks')}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <Progress value={taskProgress} className="h-2" />

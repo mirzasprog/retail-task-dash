@@ -43,7 +43,8 @@
     "last7Days": "Last 7 days performance",
     "dailyTasks": "Daily Tasks",
     "completedOf": "of",
-    "completedTasks": "completed"
+    "completedTasks": "completed",
+    "viewAllTasks": "View All Tasks"
   },
   "myDay": {
     "title": "My Day",

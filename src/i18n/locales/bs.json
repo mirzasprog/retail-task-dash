@@ -43,7 +43,8 @@
     "last7Days": "Performanse zadnjih 7 dana",
     "dailyTasks": "Dnevni zadaci",
     "completedOf": "od",
-    "completedTasks": "završeno"
+    "completedTasks": "završeno",
+    "viewAllTasks": "Pogledaj sve zadatke"
   },
   "myDay": {
     "title": "Moj dan",
