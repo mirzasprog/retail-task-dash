@@ -11,6 +11,8 @@ import PriceChecker from "./pages/PriceChecker";
 import TaskMap from "./pages/TaskMap";
 import TaskTemplates from "./pages/TaskTemplates";
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/my-day" element={<MyDay />} />
           <Route path="/ai-suggestions" element={<AISuggestions />} />
