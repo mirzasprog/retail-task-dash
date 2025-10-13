@@ -262,6 +262,55 @@ const Dashboard = () => {
         return;
       }
 
+      // Fetch category sales for fruits & veg share
+      const { data: categorySales } = await supabase
+        .from('daily_category_sales')
+        .select(`
+          sales_amount,
+          product_categories (
+            name
+          )
+        `)
+        .eq('store_id', selectedStore)
+        .eq('date', today);
+
+      let fruitsVegShare = 0;
+      let fruitsVegShareYesterday = 0;
+
+      if (categorySales && categorySales.length > 0) {
+        const totalSales = categorySales.reduce((sum, cat) => sum + (cat.sales_amount || 0), 0);
+        const fruitsVegCategory = categorySales.find(
+          cat => (cat.product_categories as any)?.name?.toLowerCase().includes('fruit') ||
+                 (cat.product_categories as any)?.name?.toLowerCase().includes('vegetable')
+        );
+        if (fruitsVegCategory && totalSales > 0) {
+          fruitsVegShare = ((fruitsVegCategory.sales_amount || 0) / totalSales) * 100;
+        }
+      }
+
+      // Fetch yesterday's category sales
+      const { data: yesterdayCategorySales } = await supabase
+        .from('daily_category_sales')
+        .select(`
+          sales_amount,
+          product_categories (
+            name
+          )
+        `)
+        .eq('store_id', selectedStore)
+        .eq('date', yesterday);
+
+      if (yesterdayCategorySales && yesterdayCategorySales.length > 0) {
+        const totalSalesYesterday = yesterdayCategorySales.reduce((sum, cat) => sum + (cat.sales_amount || 0), 0);
+        const fruitsVegCategoryYesterday = yesterdayCategorySales.find(
+          cat => (cat.product_categories as any)?.name?.toLowerCase().includes('fruit') ||
+                 (cat.product_categories as any)?.name?.toLowerCase().includes('vegetable')
+        );
+        if (fruitsVegCategoryYesterday && totalSalesYesterday > 0) {
+          fruitsVegShareYesterday = ((fruitsVegCategoryYesterday.sales_amount || 0) / totalSalesYesterday) * 100;
+        }
+      }
+
       // Calculate changes
       const calculateChange = (today: number | null, yesterday: number | null) => {
         if (!today || !yesterday || yesterday === 0) return 0;
@@ -273,9 +322,10 @@ const Dashboard = () => {
       const availabilityChange = calculateChange(todayKPI.availability_percent, yesterdayKPI?.availability_percent);
       const scoChange = calculateChange(todayKPI.sco_uptime_percent, yesterdayKPI?.sco_uptime_percent);
       const queueChange = calculateChange(todayKPI.queue_time_minutes, yesterdayKPI?.queue_time_minutes);
+      const fruitsVegChange = calculateChange(fruitsVegShare, fruitsVegShareYesterday);
 
       // Determine status based on values
-      const getSalesStatus = (shrinkage: number) => {
+      const getShrinkageStatus = (shrinkage: number) => {
         if (shrinkage < 1) return 'good';
         if (shrinkage < 2) return 'warning';
         return 'critical';
@@ -309,7 +359,7 @@ const Dashboard = () => {
           change: Math.abs(shrinkageChange), 
           icon: <AlertTriangle className="h-4 w-4" />, 
           trend: shrinkageChange <= 0 ? 'down' as const : 'up' as const, 
-          status: getSalesStatus(todayKPI.shrinkage_percent || 0)
+          status: getShrinkageStatus(todayKPI.shrinkage_percent || 0)
         },
         { 
           title: t('dashboard.availability'), 
@@ -334,6 +384,15 @@ const Dashboard = () => {
           icon: <Clock className="h-4 w-4" />, 
           trend: queueChange <= 0 ? 'down' as const : 'up' as const, 
           status: getQueueStatus(todayKPI.queue_time_minutes || 0)
+        },
+        { 
+          title: t('dashboard.fruitsVegShare'), 
+          value: `${fruitsVegShare.toFixed(1)}%`, 
+          change: Math.abs(fruitsVegChange), 
+          icon: <Package className="h-4 w-4" />, 
+          trend: fruitsVegChange >= 0 ? 'up' as const : 'down' as const, 
+          status: 'good' as const,
+          onClick: () => { fetchCategoryBreakdown(); setShowCategoryBreakdown(true); }
         },
       ];
 
