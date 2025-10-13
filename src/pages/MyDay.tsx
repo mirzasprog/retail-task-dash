@@ -18,8 +18,10 @@ import {
   AlertCircle,
   PlayCircle,
   CheckCheck,
-  Loader2
+  Loader2,
+  ArrowLeft
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -38,6 +40,7 @@ interface Task {
 
 const MyDay = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { isStoreManager, loading: roleLoading } = useUserRole(user?.id);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -339,6 +342,15 @@ const MyDay = () => {
       <div className="sticky top-0 z-10 bg-background border-b">
         <div className="p-4">
           <div className="max-w-3xl mx-auto">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              className="mb-3"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t('common.back')}
+            </Button>
             <h1 className="text-2xl font-bold mb-1">{t('myDay.title')}</h1>
             <p className="text-sm text-muted-foreground">
               {format(new Date(), 'EEEE, MMMM d, yyyy')}

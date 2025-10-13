@@ -115,6 +115,7 @@
     "filter": "Filter",
     "loading": "Učitavanje...",
     "noData": "Nema dostupnih podataka",
-    "of": "od"
+    "of": "od",
+    "back": "Nazad"
   }
 }

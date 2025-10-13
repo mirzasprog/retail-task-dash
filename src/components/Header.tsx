@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, CheckSquare, LayoutDashboard } from "lucide-react";
@@ -11,9 +12,10 @@ import {
 } from "@/components/ui/sheet";
 
 export const Header = () => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { isStoreManager } = useUserRole(user?.id);
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -32,14 +34,16 @@ export const Header = () => {
             <LayoutDashboard className="h-4 w-4" />
             {t('dashboard.title')}
           </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/my-day')}
-            className="gap-2"
-          >
-            <CheckSquare className="h-4 w-4" />
-            {t('dashboard.myDay')}
-          </Button>
+          {isStoreManager && (
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/my-day')}
+              className="gap-2"
+            >
+              <CheckSquare className="h-4 w-4" />
+              {t('dashboard.myDay')}
+            </Button>
+          )}
           <LanguageSwitcher />
           <Button variant="outline" onClick={signOut} className="gap-2">
             <LogOut className="h-4 w-4" />
@@ -66,14 +70,16 @@ export const Header = () => {
                   <LayoutDashboard className="h-4 w-4" />
                   {t('dashboard.title')}
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/my-day')}
-                  className="justify-start gap-2"
-                >
-                  <CheckSquare className="h-4 w-4" />
-                  {t('dashboard.myDay')}
-                </Button>
+                {isStoreManager && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate('/my-day')}
+                    className="justify-start gap-2"
+                  >
+                    <CheckSquare className="h-4 w-4" />
+                    {t('dashboard.myDay')}
+                  </Button>
+                )}
                 <Button variant="outline" onClick={signOut} className="justify-start gap-2">
                   <LogOut className="h-4 w-4" />
                   {t('auth.signout')}

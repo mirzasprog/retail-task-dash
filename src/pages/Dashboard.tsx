@@ -112,12 +112,19 @@ const Dashboard = () => {
   const [availableStores, setAvailableStores] = useState<Array<{ id: string; name: string }>>([]);
   const [userStoreId, setUserStoreId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [todayTasks, setTodayTasks] = useState<Array<{ id: string; title: string; status: string; priority: string; due_date: string }>>([]);
 
   useEffect(() => {
     if (user && !roleLoading) {
       fetchUserStores();
     }
   }, [user, roleLoading, isStoreManager, isHQAdmin]);
+
+  useEffect(() => {
+    if (selectedStore && isStoreManager) {
+      fetchTodayTasks();
+    }
+  }, [selectedStore, isStoreManager]);
 
   const fetchUserStores = async () => {
     try {
@@ -158,6 +165,29 @@ const Dashboard = () => {
       console.error('Error fetching stores:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTodayTasks = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('id, title, status, priority, due_date')
+        .eq('due_date', today)
+        .eq('store_id', selectedStore)
+        .order('priority', { ascending: false })
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching tasks:', error);
+        return;
+      }
+
+      setTodayTasks(data || []);
+    } catch (error) {
+      console.error('Error fetching today tasks:', error);
     }
   };
 
@@ -225,17 +255,17 @@ const Dashboard = () => {
   const kpiData = storeDataMap[selectedStore]?.kpis || storeDataMap["store-1"].kpis;
   const salesData = storeDataMap[selectedStore]?.sales || storeDataMap["store-1"].sales;
 
-  const tasks: Task[] = [
-    { id: '1', title: 'Opening checklist completion', status: 'done', priority: 'high', time: '08:00 AM' },
-    { id: '2', title: 'Price verification - Fresh produce', status: 'in-progress', priority: 'high', time: '09:30 AM' },
-    { id: '3', title: 'Shelf audit - Aisle 3-5', status: 'pending', priority: 'medium', time: '11:00 AM' },
-    { id: '4', title: 'Bake-off quality check', status: 'done', priority: 'high', time: '07:00 AM' },
-    { id: '5', title: 'Inventory count - Dairy section', status: 'pending', priority: 'medium', time: '02:00 PM' },
-    { id: '6', title: 'Closing cash reconciliation', status: 'pending', priority: 'high', time: '08:00 PM' },
-  ];
+  // Map database tasks to UI format
+  const tasks: Task[] = todayTasks.map(task => ({
+    id: task.id,
+    title: task.title,
+    status: task.status === 'completed' ? 'done' : task.status === 'in_progress' ? 'in-progress' : 'pending',
+    priority: task.priority as 'high' | 'medium' | 'low',
+    time: new Date(task.due_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+  }));
 
   const completedTasks = tasks.filter(t => t.status === 'done').length;
-  const taskProgress = (completedTasks / tasks.length) * 100;
+  const taskProgress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
 
   if (loading || roleLoading) {
     return (
@@ -309,30 +339,38 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Daily Tasks */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>{t('dashboard.dailyTasks')}</CardTitle>
-                  <CardDescription>
-                    {completedTasks} {t('common.of')} {tasks.length} {t('dashboard.completedTasks')}
-                  </CardDescription>
+          {/* Daily Tasks - Only for Store Managers */}
+          {isStoreManager && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>{t('dashboard.dailyTasks')}</CardTitle>
+                    <CardDescription>
+                      {completedTasks} {t('common.of')} {tasks.length} {t('dashboard.completedTasks')}
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => navigate('/my-day')} size="sm">
+                    {t('dashboard.viewAllTasks')}
+                  </Button>
                 </div>
-                <Button onClick={() => navigate('/my-day')} size="sm">
-                  {t('dashboard.viewAllTasks')}
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Progress value={taskProgress} className="h-2" />
-              <div className="space-y-1 max-h-[240px] overflow-y-auto">
-                {tasks.map(task => (
-                  <TaskItem key={task.id} task={task} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Progress value={taskProgress} className="h-2" />
+                <div className="space-y-1 max-h-[240px] overflow-y-auto">
+                  {tasks.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      {t('myDay.noTasksToday')}
+                    </p>
+                  ) : (
+                    tasks.map(task => (
+                      <TaskItem key={task.id} task={task} />
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
       </div>

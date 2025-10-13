@@ -115,6 +115,7 @@
     "filter": "Filter",
     "loading": "Loading...",
     "noData": "No data available",
-    "of": "of"
+    "of": "of",
+    "back": "Back"
   }
 }
