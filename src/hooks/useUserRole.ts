@@ -9,6 +9,7 @@ export const useUserRole = (userId: string | undefined) => {
 
   useEffect(() => {
     if (!userId) {
+      setRoles([]);
       setLoading(false);
       return;
     }
@@ -21,6 +22,7 @@ export const useUserRole = (userId: string | undefined) => {
 
       if (error) {
         console.error("Error fetching user roles:", error);
+        setRoles([]);
       } else if (data) {
         setRoles(data.map(r => r.role as UserRole));
       }
@@ -28,6 +30,27 @@ export const useUserRole = (userId: string | undefined) => {
     };
 
     fetchRoles();
+
+    // Subscribe to realtime updates for role changes
+    const channel = supabase
+      .channel(`user_roles:${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_roles',
+          filter: `user_id=eq.${userId}`
+        },
+        () => {
+          fetchRoles();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userId]);
 
   const hasRole = (role: UserRole) => roles.includes(role);
