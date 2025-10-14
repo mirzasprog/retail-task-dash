@@ -12,8 +12,8 @@ import { DatabaseSync } from "@/components/admin/DatabaseSync";
 import { useTranslation } from "react-i18next";
 
 export default function Admin() {
-  const { session } = useAuth();
-  const { isHQAdmin, loading } = useUserRole(session?.user?.id);
+  const { user } = useAuth();
+  const { isHQAdmin, loading } = useUserRole(user?.id);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
