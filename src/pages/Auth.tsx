@@ -9,6 +9,42 @@ import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { z } from "zod";
+
+// Input validation schemas
+const loginSchema = z.object({
+  email: z.string()
+    .trim()
+    .min(1, "Email is required")
+    .email("Invalid email address")
+    .max(255, "Email must be less than 255 characters"),
+  password: z.string()
+    .min(1, "Password is required")
+    .max(255, "Password must be less than 255 characters")
+});
+
+const signupSchema = z.object({
+  email: z.string()
+    .trim()
+    .min(1, "Email is required")
+    .email("Invalid email address")
+    .max(255, "Email must be less than 255 characters"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .max(255, "Password must be less than 255 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+  confirmPassword: z.string(),
+  fullName: z.string()
+    .trim()
+    .min(1, "Full name is required")
+    .max(100, "Full name must be less than 100 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Full name can only contain letters, spaces, hyphens, and apostrophes")
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
 
 const Auth = () => {
   const { signIn, signUp } = useAuth();
@@ -24,9 +60,15 @@ const Auth = () => {
     const password = formData.get('password') as string;
 
     try {
-      await signIn(email, password);
+      // Validate input
+      const validated = loginSchema.parse({ email, password });
+      await signIn(validated.email, validated.password);
     } catch (error: any) {
-      toast.error(error.message || t('errors.failedToSignIn'));
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error(error.message || t('errors.failedToSignIn'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -43,19 +85,15 @@ const Auth = () => {
     const fullName = formData.get('fullName') as string;
 
     try {
-      if (!email || !password || !confirmPassword || !fullName) {
-        toast.error(t('errors.fillAllFields'));
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        toast.error(t('errors.passwordsDoNotMatch'));
-        return;
-      }
-
-      await signUp(email, password, fullName);
+      // Validate input
+      const validated = signupSchema.parse({ email, password, confirmPassword, fullName });
+      await signUp(validated.email, validated.password, validated.fullName);
     } catch (error: any) {
-      toast.error(error.message || t('errors.failedToCreateAccount'));
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error(error.message || t('errors.failedToCreateAccount'));
+      }
     } finally {
       setIsLoading(false);
     }
