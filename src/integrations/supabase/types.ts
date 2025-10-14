@@ -363,30 +363,46 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active: boolean | null
           created_at: string
           email: string
           full_name: string | null
           id: string
+          is_area_manager: boolean | null
+          managed_region_id: string | null
           store_id: string | null
           updated_at: string
         }
         Insert: {
+          active?: boolean | null
           created_at?: string
           email: string
           full_name?: string | null
           id: string
+          is_area_manager?: boolean | null
+          managed_region_id?: string | null
           store_id?: string | null
           updated_at?: string
         }
         Update: {
+          active?: boolean | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
+          is_area_manager?: boolean | null
+          managed_region_id?: string | null
           store_id?: string | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_managed_region_id_fkey"
+            columns: ["managed_region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_store_id_fkey"
             columns: ["store_id"]
@@ -472,36 +488,55 @@ export type Database = {
           address: string | null
           code: string
           created_at: string
+          format: Database["public"]["Enums"]["store_format"] | null
           id: string
           latitude: number | null
           longitude: number | null
+          manager_id: string | null
           name: string
+          num_employees: number | null
           region_id: string
+          size_sqm: number | null
           updated_at: string
         }
         Insert: {
           address?: string | null
           code: string
           created_at?: string
+          format?: Database["public"]["Enums"]["store_format"] | null
           id?: string
           latitude?: number | null
           longitude?: number | null
+          manager_id?: string | null
           name: string
+          num_employees?: number | null
           region_id: string
+          size_sqm?: number | null
           updated_at?: string
         }
         Update: {
           address?: string | null
           code?: string
           created_at?: string
+          format?: Database["public"]["Enums"]["store_format"] | null
           id?: string
           latitude?: number | null
           longitude?: number | null
+          manager_id?: string | null
           name?: string
+          num_employees?: number | null
           region_id?: string
+          size_sqm?: number | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "stores_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "stores_region_id_fkey"
             columns: ["region_id"]
@@ -864,6 +899,7 @@ export type Database = {
         | "frozen"
         | "dry_goods"
         | "other"
+      store_format: "maxi" | "super" | "small"
       task_priority: "low" | "medium" | "high" | "critical"
       task_status: "not_started" | "in_progress" | "completed"
     }
@@ -1003,6 +1039,7 @@ export const Constants = {
         "dry_goods",
         "other",
       ],
+      store_format: ["maxi", "super", "small"],
       task_priority: ["low", "medium", "high", "critical"],
       task_status: ["not_started", "in_progress", "completed"],
     },

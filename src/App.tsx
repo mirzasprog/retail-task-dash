@@ -11,6 +11,7 @@ import PriceChecker from "./pages/PriceChecker";
 import TaskMap from "./pages/TaskMap";
 import TaskTemplates from "./pages/TaskTemplates";
 import DailySales from "./pages/DailySales";
+import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/task-map" element={<TaskMap />} />
           <Route path="/task-templates" element={<TaskTemplates />} />
           <Route path="/daily-sales" element={<DailySales />} />
+          <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, CheckSquare, LayoutDashboard } from "lucide-react";
+import { LogOut, Menu, CheckSquare, LayoutDashboard, Shield } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,7 +15,7 @@ export const Header = () => {
   const { signOut, user } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isStoreManager } = useUserRole(user?.id);
+  const { isStoreManager, isHQAdmin } = useUserRole(user?.id);
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -42,6 +42,16 @@ export const Header = () => {
             >
               <CheckSquare className="h-4 w-4" />
               {t('dashboard.myDay')}
+            </Button>
+          )}
+          {isHQAdmin && (
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/admin')}
+              className="gap-2"
+            >
+              <Shield className="h-4 w-4" />
+              {t('admin.title')}
             </Button>
           )}
           <LanguageSwitcher />
@@ -78,6 +88,16 @@ export const Header = () => {
                   >
                     <CheckSquare className="h-4 w-4" />
                     {t('dashboard.myDay')}
+                  </Button>
+                )}
+                {isHQAdmin && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate('/admin')}
+                    className="justify-start gap-2"
+                  >
+                    <Shield className="h-4 w-4" />
+                    {t('admin.title')}
                   </Button>
                 )}
                 <Button variant="outline" onClick={signOut} className="justify-start gap-2">

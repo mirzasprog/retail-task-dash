@@ -269,6 +269,132 @@
     "message": "Oops! Page not found",
     "returnHome": "Return to Home"
   },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Manage stores, users, roles, and system settings",
+    "tabs": {
+      "stores": "Stores",
+      "users": "Users",
+      "roles": "Roles",
+      "sync": "Database Sync",
+      "logs": "System Logs"
+    },
+    "stores": {
+      "title": "Store Management",
+      "addStore": "Add Store",
+      "editStore": "Edit Store",
+      "search": "Search stores...",
+      "selectRegion": "Select region",
+      "selectManager": "Select manager",
+      "createSuccess": "Store created successfully",
+      "updateSuccess": "Store updated successfully",
+      "deleteSuccess": "Store deleted successfully",
+      "saveError": "Error saving store",
+      "deleteError": "Error deleting store",
+      "columns": {
+        "code": "Code",
+        "name": "Name",
+        "region": "Region",
+        "format": "Format",
+        "manager": "Manager",
+        "size": "Size",
+        "employees": "Employees"
+      },
+      "fields": {
+        "code": "Store Code",
+        "name": "Store Name",
+        "region": "Region",
+        "manager": "Store Manager",
+        "format": "Store Format",
+        "size": "Size (m²)",
+        "employees": "Number of Employees",
+        "address": "Address",
+        "latitude": "Latitude",
+        "longitude": "Longitude"
+      }
+    },
+    "users": {
+      "title": "User Management",
+      "addUser": "Add User",
+      "editUser": "Edit User",
+      "search": "Search users...",
+      "selectStore": "Select store",
+      "selectRegion": "Select region",
+      "createInfo": "User Creation",
+      "createDescription": "Users must sign up via the Auth page. You can update their profile here.",
+      "createSuccess": "User profile updated",
+      "updateSuccess": "User updated successfully",
+      "statusUpdated": "User status updated",
+      "updateError": "Error updating user",
+      "saveError": "Error saving user",
+      "active": "Active",
+      "inactive": "Inactive",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "store": "Store",
+        "roles": "Roles",
+        "status": "Status"
+      },
+      "fields": {
+        "name": "Full Name",
+        "email": "Email",
+        "store": "Assigned Store",
+        "areaManager": "Is Area Manager",
+        "managedRegion": "Managed Region"
+      }
+    },
+    "roles": {
+      "title": "Role Management",
+      "addRole": "Add Role",
+      "selectUser": "Select User",
+      "chooseUser": "Choose a user",
+      "selectRole": "Select Role",
+      "chooseRole": "Choose a role",
+      "addSuccess": "Role added successfully",
+      "removeSuccess": "Role removed successfully",
+      "addError": "Error adding role",
+      "removeError": "Error removing role",
+      "columns": {
+        "user": "User",
+        "email": "Email",
+        "roles": "Assigned Roles"
+      }
+    },
+    "sync": {
+      "title": "Database Synchronization",
+      "lastSync": "Last Sync",
+      "never": "Never",
+      "status": "Status",
+      "online": "Online",
+      "mode": "Mode",
+      "manual": "Manual",
+      "actions": "Actions",
+      "syncNow": "Sync Now",
+      "syncing": "Syncing...",
+      "syncSuccess": "Database synchronized",
+      "syncDescription": "Sales data has been updated",
+      "syncError": "Error synchronizing database",
+      "info": {
+        "title": "What gets synchronized:",
+        "salesData": "Daily sales data from all stores",
+        "kpiData": "Key performance indicators",
+        "categoryData": "Category-level sales data",
+        "scheduled": "Automatic sync runs every hour"
+      }
+    },
+    "logs": {
+      "title": "System Logs",
+      "columns": {
+        "timestamp": "Timestamp",
+        "method": "Method",
+        "endpoint": "Endpoint",
+        "status": "Status",
+        "latency": "Latency",
+        "error": "Error"
+      }
+    }
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
