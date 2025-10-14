@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.sla-monitor]
 verify_jwt = false
+
+[functions.sales-data-sync]
+verify_jwt = false

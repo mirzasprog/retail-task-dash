@@ -283,6 +283,30 @@
     "back": "Back",
     "create": "Create",
     "update": "Update",
-    "close": "Close"
+    "close": "Close",
+    "all": "All",
+    "store": "Store",
+    "region": "Region"
+  },
+  "dailySales": {
+    "title": "Daily Sales",
+    "subtitle": "Real-time sales data from all stores",
+    "syncNow": "Sync Now",
+    "syncing": "Syncing...",
+    "selectDate": "Select Date",
+    "selectStore": "Select Store",
+    "currentYearSales": "Current Year Sales",
+    "previousYearSales": "Previous Year Sales",
+    "growth": "Growth",
+    "regionSummary": "Regional Summary",
+    "detailedData": "Detailed Sales Data",
+    "hourlyBreakdown": "Hourly breakdown of sales performance",
+    "noData": "No sales data available for the selected date",
+    "hour": "Hour",
+    "currentSales": "Current Sales",
+    "previousSales": "Previous Sales",
+    "salesGrowth": "Sales Growth",
+    "currentCustomers": "Current Customers",
+    "customerGrowth": "Customer Growth"
   }
 }

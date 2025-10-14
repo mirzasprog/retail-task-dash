@@ -116,6 +116,59 @@ export type Database = {
           },
         ]
       }
+      daily_sales: {
+        Row: {
+          created_at: string
+          current_year_customers: number
+          current_year_sales: number
+          customer_growth_percent: number | null
+          date: string
+          hour: number
+          id: string
+          previous_year_customers: number
+          previous_year_sales: number
+          sales_growth_percent: number | null
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_year_customers?: number
+          current_year_sales?: number
+          customer_growth_percent?: number | null
+          date: string
+          hour: number
+          id?: string
+          previous_year_customers?: number
+          previous_year_sales?: number
+          sales_growth_percent?: number | null
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_year_customers?: number
+          current_year_sales?: number
+          customer_growth_percent?: number | null
+          date?: string
+          hour?: number
+          id?: string
+          previous_year_customers?: number
+          previous_year_sales?: number
+          sales_growth_percent?: number | null
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_sales_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       idempotency_keys: {
         Row: {
           created_at: string
@@ -366,6 +419,53 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      store_database_configs: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          database_path: string
+          database_type: string
+          host: string
+          id: string
+          port: number | null
+          store_id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          database_path: string
+          database_type?: string
+          host: string
+          id?: string
+          port?: number | null
+          store_id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          database_path?: string
+          database_type?: string
+          host?: string
+          id?: string
+          port?: number | null
+          store_id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_database_configs_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stores: {
         Row: {
@@ -722,6 +822,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_previous_year_date: {
+        Args: { input_date: string }
+        Returns: string
+      }
       check_task_sla_violations: {
         Args: Record<PropertyKey, never>
         Returns: undefined
