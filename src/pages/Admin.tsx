@@ -14,15 +14,19 @@ import { useTranslation } from "react-i18next";
 
 export default function Admin() {
   const { user } = useAuth();
-  const { isAdmin, loading } = useUserRole(user?.id);
+  const { isAdmin, role, loading } = useUserRole(user?.id);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  // Debug logging
+  console.log('[Admin] User:', user?.email, 'Role:', role, 'isAdmin:', isAdmin, 'loading:', loading);
+
   useEffect(() => {
-    if (!loading && !isAdmin) {
+    if (!loading && !isAdmin && user) {
+      console.log('[Admin] Not admin, redirecting to /dashboard');
       navigate("/dashboard", { replace: true });
     }
-  }, [isAdmin, loading, navigate]);
+  }, [isAdmin, loading, user, navigate]);
 
   if (loading) {
     return (

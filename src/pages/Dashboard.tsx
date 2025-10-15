@@ -112,7 +112,7 @@ const TaskItem = ({ task }: { task: Task }) => {
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isStoreManager, isRegionalSupervisor, isHQAdmin, isAdmin, loading: roleLoading } = useUserRole(user?.id);
+  const { isStoreManager, isRegionalSupervisor, isHQAdmin, isAdmin, role, loading: roleLoading } = useUserRole(user?.id);
   const navigate = useNavigate();
   const [selectedStore, setSelectedStore] = useState<string>("");
   const [availableStores, setAvailableStores] = useState<Array<{ id: string; name: string }>>([]);
@@ -126,16 +126,21 @@ const Dashboard = () => {
   const [kpiData, setKpiData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
-  // Redirect admin users to admin panel immediately
+  // Debug logging
+  console.log('[Dashboard] User:', user?.email, 'Role:', role, 'isAdmin:', isAdmin, 'roleLoading:', roleLoading);
+
+  // Redirect admin users ONCE
   useEffect(() => {
-    if (!roleLoading && isAdmin) {
+    if (!roleLoading && isAdmin && user) {
+      console.log('[Dashboard] Admin detected, redirecting to /admin');
       navigate('/admin', { replace: true });
     }
-  }, [isAdmin, roleLoading, navigate]);
+  }, [isAdmin, roleLoading, user, navigate]);
 
   // Fetch stores only for non-admin users
   useEffect(() => {
     if (user && !roleLoading && !isAdmin) {
+      console.log('[Dashboard] Fetching stores for non-admin user');
       fetchUserStores();
     }
   }, [user, roleLoading, isAdmin]);
