@@ -142,20 +142,6 @@ const Dashboard = () => {
     }
   }, [user, roleLoading, isStoreManager, isHQAdmin, isAdmin]);
 
-  // Show loading while checking role
-  if (roleLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Admin users should never see this - they get redirected above
-  if (isAdmin) {
-    return null;
-  }
-
   useEffect(() => {
     if (selectedStore) {
       if (isStoreManager) {
@@ -649,6 +635,15 @@ const Dashboard = () => {
   const allTasksProgress = allTasksFormatted.length > 0 ? (completedAllTasks / allTasksFormatted.length) * 100 : 0;
 
   if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Admin users should never see dashboard - they get redirected to admin panel
+  if (isAdmin) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
