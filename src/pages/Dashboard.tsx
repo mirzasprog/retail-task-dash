@@ -126,12 +126,9 @@ const Dashboard = () => {
   const [kpiData, setKpiData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
-  // Debug logging
-  console.log('[Dashboard] User:', user?.email, 'Role:', role, 'isAdmin:', isAdmin, 'roleLoading:', roleLoading);
-
-  // Redirect admin users ONCE
+  // Redirect admin users ONCE - only if we have a user and role is loaded
   useEffect(() => {
-    if (!roleLoading && isAdmin && user) {
+    if (user && !roleLoading && isAdmin) {
       console.log('[Dashboard] Admin detected, redirecting to /admin');
       navigate('/admin', { replace: true });
     }
@@ -638,7 +635,7 @@ const Dashboard = () => {
   const allTasksProgress = allTasksFormatted.length > 0 ? (completedAllTasks / allTasksFormatted.length) * 100 : 0;
 
   // Show loading while checking role or fetching data
-  if (roleLoading || loading) {
+  if (roleLoading || loading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -646,13 +643,9 @@ const Dashboard = () => {
     );
   }
 
-  // If admin, don't render anything (they're being redirected)
+  // If admin, show nothing while redirecting
   if (isAdmin) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return null;
   }
 
   return (
