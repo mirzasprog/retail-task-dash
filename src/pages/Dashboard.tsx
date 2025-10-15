@@ -126,11 +126,9 @@ const Dashboard = () => {
   const [kpiData, setKpiData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
-  // Redirect admin users to admin panel - must happen first
+  // Redirect admin users to admin panel
   useEffect(() => {
-    console.log('[Dashboard] Role check - isAdmin:', isAdmin, 'roleLoading:', roleLoading);
     if (!roleLoading && isAdmin) {
-      console.log('[Dashboard] Redirecting admin to /admin');
       navigate('/admin', { replace: true });
     }
   }, [isAdmin, roleLoading, navigate]);
