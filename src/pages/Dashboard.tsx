@@ -126,18 +126,33 @@ const Dashboard = () => {
   const [kpiData, setKpiData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
-  // Redirect admin users to admin panel
+  // Redirect admin users to admin panel - must happen first
   useEffect(() => {
     if (!roleLoading && isAdmin) {
-      navigate('/admin');
+      navigate('/admin', { replace: true });
     }
   }, [isAdmin, roleLoading, navigate]);
 
+  // Don't fetch any data if user is admin (they'll be redirected)
   useEffect(() => {
     if (user && !roleLoading && !isAdmin) {
       fetchUserStores();
     }
   }, [user, roleLoading, isStoreManager, isHQAdmin, isAdmin]);
+
+  // Show loading while checking role
+  if (roleLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Admin users should never see this - they get redirected above
+  if (isAdmin) {
+    return null;
+  }
 
   useEffect(() => {
     if (selectedStore) {
