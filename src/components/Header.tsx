@@ -15,7 +15,7 @@ export const Header = () => {
   const { signOut, user } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isStoreManager, isHQAdmin } = useUserRole(user?.id);
+  const { isStoreManager, isAdmin } = useUserRole(user?.id);
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -44,7 +44,7 @@ export const Header = () => {
               {t('dashboard.myDay')}
             </Button>
           )}
-          {isHQAdmin && (
+          {isAdmin && (
             <Button
               variant="ghost"
               onClick={() => navigate('/admin')}
@@ -90,7 +90,7 @@ export const Header = () => {
                     {t('dashboard.myDay')}
                   </Button>
                 )}
-                {isHQAdmin && (
+                {isAdmin && (
                   <Button
                     variant="ghost"
                     onClick={() => navigate('/admin')}

@@ -13,15 +13,15 @@ import { useTranslation } from "react-i18next";
 
 export default function Admin() {
   const { user } = useAuth();
-  const { isHQAdmin, loading } = useUserRole(user?.id);
+  const { isAdmin, loading } = useUserRole(user?.id);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!loading && !isHQAdmin) {
+    if (!loading && !isAdmin) {
       navigate("/");
     }
-  }, [isHQAdmin, loading, navigate]);
+  }, [isAdmin, loading, navigate]);
 
   if (loading) {
     return (
@@ -31,7 +31,7 @@ export default function Admin() {
     );
   }
 
-  if (!isHQAdmin) {
+  if (!isAdmin) {
     return null;
   }
 

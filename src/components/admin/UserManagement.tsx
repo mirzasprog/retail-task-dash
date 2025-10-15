@@ -44,11 +44,14 @@ export function UserManagement() {
         .from("stores")
         .select("id, name, code");
 
-      return profiles?.map(profile => ({
-        ...profile,
-        roles: roles?.filter(r => r.user_id === profile.id) || [],
-        store: stores?.find(s => s.id === profile.store_id)
-      }));
+      return profiles?.map(profile => {
+        const userRole = roles?.find(r => r.user_id === profile.id);
+        return {
+          ...profile,
+          user_role: userRole || null,
+          store: stores?.find(s => s.id === profile.store_id)
+        };
+      });
     },
   });
 
@@ -125,13 +128,13 @@ export function UserManagement() {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.store?.name || "-"}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      {user.roles?.map((r: any, i: number) => (
-                        <Badge key={i} variant="secondary">
-                          {r.role}
-                        </Badge>
-                      ))}
-                    </div>
+                    {user.user_role ? (
+                      <Badge variant="secondary">
+                        {user.user_role.role}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant={user.active ? "default" : "destructive"}>

@@ -1,35 +1,36 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type UserRole = "store_manager" | "regional_supervisor" | "hq_administrator";
+export type UserRole = "admin" | "hq_administrator" | "regional_supervisor" | "store_manager";
 
 export const useUserRole = (userId: string | undefined) => {
-  const [roles, setRoles] = useState<UserRole[]>([]);
+  const [role, setRole] = useState<UserRole | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!userId) {
-      setRoles([]);
+      setRole(null);
       setLoading(false);
       return;
     }
 
-    const fetchRoles = async () => {
+    const fetchRole = async () => {
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .single();
 
       if (error) {
-        console.error("Error fetching user roles:", error);
-        setRoles([]);
+        console.error("Error fetching user role:", error);
+        setRole(null);
       } else if (data) {
-        setRoles(data.map(r => r.role as UserRole));
+        setRole(data.role as UserRole);
       }
       setLoading(false);
     };
 
-    fetchRoles();
+    fetchRole();
 
     // Subscribe to realtime updates for role changes
     const channel = supabase
@@ -43,7 +44,7 @@ export const useUserRole = (userId: string | undefined) => {
           filter: `user_id=eq.${userId}`
         },
         () => {
-          fetchRoles();
+          fetchRole();
         }
       )
       .subscribe();
@@ -53,15 +54,17 @@ export const useUserRole = (userId: string | undefined) => {
     };
   }, [userId]);
 
-  const hasRole = (role: UserRole) => roles.includes(role);
-  const isStoreManager = hasRole("store_manager");
-  const isRegionalSupervisor = hasRole("regional_supervisor");
-  const isHQAdmin = hasRole("hq_administrator");
+  const hasRole = (checkRole: UserRole) => role === checkRole;
+  const isAdmin = role === "admin";
+  const isStoreManager = role === "store_manager";
+  const isRegionalSupervisor = role === "regional_supervisor";
+  const isHQAdmin = role === "hq_administrator";
 
   return {
-    roles,
+    role,
     loading,
     hasRole,
+    isAdmin,
     isStoreManager,
     isRegionalSupervisor,
     isHQAdmin

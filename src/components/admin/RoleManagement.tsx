@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 
-const AVAILABLE_ROLES = ["store_manager", "regional_supervisor", "hq_administrator"];
+const AVAILABLE_ROLES = ["admin", "hq_administrator", "regional_supervisor", "store_manager"];
 
 export function RoleManagement() {
   const [selectedUserId, setSelectedUserId] = useState("");
@@ -47,10 +47,13 @@ export function RoleManagement() {
         .from("user_roles")
         .select("user_id, role");
 
-      return profiles?.map(profile => ({
-        ...profile,
-        user_roles: roles?.filter(r => r.user_id === profile.id) || []
-      }));
+      return profiles?.map(profile => {
+        const userRole = roles?.find(r => r.user_id === profile.id);
+        return {
+          ...profile,
+          user_role: userRole || null
+        };
+      });
     },
   });
 
@@ -58,7 +61,7 @@ export function RoleManagement() {
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
       const { error } = await supabase
         .from("user_roles")
-        .insert([{ user_id: userId, role: role as any }]);
+        .upsert([{ user_id: userId, role: role as any }], { onConflict: 'user_id' });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -76,12 +79,11 @@ export function RoleManagement() {
   });
 
   const removeRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+    mutationFn: async ({ userId }: { userId: string }) => {
       const { error } = await supabase
         .from("user_roles")
         .delete()
-        .eq("user_id", userId)
-        .eq("role", role as any);
+        .eq("user_id", userId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -167,32 +169,28 @@ export function RoleManagement() {
                 <TableCell className="font-medium">{user.full_name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <div className="flex gap-2 flex-wrap">
-                    {user.user_roles?.map((r: any, i: number) => (
-                      <Badge key={i} variant="secondary">
-                        {r.role}
-                      </Badge>
-                    ))}
-                  </div>
+                  {user.user_role ? (
+                    <Badge variant="secondary">
+                      {user.user_role.role}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground">{t("admin.roles.noRole")}</span>
+                  )}
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    {user.user_roles?.map((r: any, i: number) => (
-                      <Button
-                        key={i}
-                        variant="ghost"
-                        size="icon"
-                        onClick={() =>
-                          removeRoleMutation.mutate({
-                            userId: user.id,
-                            role: r.role,
-                          })
-                        }
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    ))}
-                  </div>
+                  {user.user_role && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        removeRoleMutation.mutate({
+                          userId: user.id,
+                        })
+                      }
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
