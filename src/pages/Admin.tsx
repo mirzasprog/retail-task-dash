@@ -18,16 +18,15 @@ export default function Admin() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Only redirect if we're sure the user is NOT admin (user exists, loading done, not admin)
+  // Redirect non-admin users - ONLY if we definitely know they're not admin
   useEffect(() => {
-    if (user && !loading && !isAdmin) {
-      console.log('[Admin] Not admin, redirecting to /dashboard');
+    if (user && !loading && role !== null && role !== 'admin') {
       navigate("/dashboard", { replace: true });
     }
-  }, [isAdmin, loading, user, navigate]);
+  }, [role, loading, user, navigate]);
 
-  // Show loading while checking
-  if (loading || !user) {
+  // Show loading while we don't have complete information
+  if (loading || !user || role === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse">{t("common.loading")}</div>
@@ -35,8 +34,8 @@ export default function Admin() {
     );
   }
 
-  // If not admin after loading, show nothing (will redirect)
-  if (!isAdmin) {
+  // If definitely not admin, show nothing (will redirect)
+  if (role !== 'admin') {
     return null;
   }
 
