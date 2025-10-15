@@ -126,19 +126,19 @@ const Dashboard = () => {
   const [kpiData, setKpiData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
-  // Redirect admin users to admin panel
+  // Redirect admin users to admin panel immediately
   useEffect(() => {
     if (!roleLoading && isAdmin) {
       navigate('/admin', { replace: true });
     }
   }, [isAdmin, roleLoading, navigate]);
 
-  // Don't fetch any data if user is admin (they'll be redirected)
+  // Fetch stores only for non-admin users
   useEffect(() => {
     if (user && !roleLoading && !isAdmin) {
       fetchUserStores();
     }
-  }, [user, roleLoading, isStoreManager, isHQAdmin, isAdmin]);
+  }, [user, roleLoading, isAdmin]);
 
   useEffect(() => {
     if (selectedStore) {
@@ -632,8 +632,8 @@ const Dashboard = () => {
   const completedAllTasks = allTasksFormatted.length > 0 ? allTasksFormatted.filter(t => t.status === 'done').length : 0;
   const allTasksProgress = allTasksFormatted.length > 0 ? (completedAllTasks / allTasksFormatted.length) * 100 : 0;
 
-  // Show loading while fetching initial data
-  if (loading) {
+  // Show loading while checking role or fetching data
+  if (roleLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -641,9 +641,13 @@ const Dashboard = () => {
     );
   }
 
-  // Admin users - show nothing while redirecting (don't show loading to avoid flash)
-  if (isAdmin || roleLoading) {
-    return null;
+  // If admin, don't render anything (they're being redirected)
+  if (isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (

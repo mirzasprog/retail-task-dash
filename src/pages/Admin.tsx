@@ -20,7 +20,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (!loading && !isAdmin) {
-      navigate("/");
+      navigate("/dashboard", { replace: true });
     }
   }, [isAdmin, loading, navigate]);
 
