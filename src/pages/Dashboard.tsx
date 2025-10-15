@@ -128,7 +128,9 @@ const Dashboard = () => {
 
   // Redirect admin users to admin panel - must happen first
   useEffect(() => {
+    console.log('[Dashboard] Role check - isAdmin:', isAdmin, 'roleLoading:', roleLoading);
     if (!roleLoading && isAdmin) {
+      console.log('[Dashboard] Redirecting admin to /admin');
       navigate('/admin', { replace: true });
     }
   }, [isAdmin, roleLoading, navigate]);
