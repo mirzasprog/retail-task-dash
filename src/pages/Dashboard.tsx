@@ -632,7 +632,8 @@ const Dashboard = () => {
   const completedAllTasks = allTasksFormatted.length > 0 ? allTasksFormatted.filter(t => t.status === 'done').length : 0;
   const allTasksProgress = allTasksFormatted.length > 0 ? (completedAllTasks / allTasksFormatted.length) * 100 : 0;
 
-  if (loading || roleLoading) {
+  // Show loading while fetching initial data
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -640,13 +641,9 @@ const Dashboard = () => {
     );
   }
 
-  // Admin users should never see dashboard - they get redirected to admin panel
-  if (isAdmin) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+  // Admin users - show nothing while redirecting (don't show loading to avoid flash)
+  if (isAdmin || roleLoading) {
+    return null;
   }
 
   return (
