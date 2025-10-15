@@ -112,7 +112,7 @@ const TaskItem = ({ task }: { task: Task }) => {
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isStoreManager, isRegionalSupervisor, isHQAdmin, loading: roleLoading } = useUserRole(user?.id);
+  const { isStoreManager, isRegionalSupervisor, isHQAdmin, isAdmin, loading: roleLoading } = useUserRole(user?.id);
   const navigate = useNavigate();
   const [selectedStore, setSelectedStore] = useState<string>("");
   const [availableStores, setAvailableStores] = useState<Array<{ id: string; name: string }>>([]);
@@ -126,11 +126,18 @@ const Dashboard = () => {
   const [kpiData, setKpiData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
+  // Redirect admin users to admin panel
   useEffect(() => {
-    if (user && !roleLoading) {
+    if (!roleLoading && isAdmin) {
+      navigate('/admin');
+    }
+  }, [isAdmin, roleLoading, navigate]);
+
+  useEffect(() => {
+    if (user && !roleLoading && !isAdmin) {
       fetchUserStores();
     }
-  }, [user, roleLoading, isStoreManager, isHQAdmin]);
+  }, [user, roleLoading, isStoreManager, isHQAdmin, isAdmin]);
 
   useEffect(() => {
     if (selectedStore) {

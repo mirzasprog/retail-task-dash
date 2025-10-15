@@ -26,23 +26,27 @@ export const Header = () => {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-2">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/dashboard')}
-            className="gap-2"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            {t('dashboard.title')}
-          </Button>
-          {isStoreManager && (
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/my-day')}
-              className="gap-2"
-            >
-              <CheckSquare className="h-4 w-4" />
-              {t('dashboard.myDay')}
-            </Button>
+          {!isAdmin && (
+            <>
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/dashboard')}
+                className="gap-2"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                {t('dashboard.title')}
+              </Button>
+              {isStoreManager && (
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/my-day')}
+                  className="gap-2"
+                >
+                  <CheckSquare className="h-4 w-4" />
+                  {t('dashboard.myDay')}
+                </Button>
+              )}
+            </>
           )}
           {isAdmin && (
             <Button
@@ -72,23 +76,27 @@ export const Header = () => {
             </SheetTrigger>
             <SheetContent>
               <nav className="flex flex-col gap-4 mt-8">
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/dashboard')}
-                  className="justify-start gap-2"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  {t('dashboard.title')}
-                </Button>
-                {isStoreManager && (
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/my-day')}
-                    className="justify-start gap-2"
-                  >
-                    <CheckSquare className="h-4 w-4" />
-                    {t('dashboard.myDay')}
-                  </Button>
+                {!isAdmin && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      onClick={() => navigate('/dashboard')}
+                      className="justify-start gap-2"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      {t('dashboard.title')}
+                    </Button>
+                    {isStoreManager && (
+                      <Button
+                        variant="ghost"
+                        onClick={() => navigate('/my-day')}
+                        className="justify-start gap-2"
+                      >
+                        <CheckSquare className="h-4 w-4" />
+                        {t('dashboard.myDay')}
+                      </Button>
+                    )}
+                  </>
                 )}
                 {isAdmin && (
                   <Button
