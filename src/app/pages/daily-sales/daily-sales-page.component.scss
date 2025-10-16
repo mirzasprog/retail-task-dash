@@ -1,0 +1,24 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-header p {
+  margin: 0.5rem 0 0;
+  color: var(--color-muted);
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

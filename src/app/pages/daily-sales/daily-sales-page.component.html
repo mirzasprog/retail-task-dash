@@ -1,0 +1,28 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>Daily sales performance</h2>
+      <p>Live view of revenue, transactions and conversion.</p>
+    </div>
+    <button class="primary">Export daily recap</button>
+  </header>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Store</th>
+        <th>Revenue</th>
+        <th>Transactions</th>
+        <th>Conversion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let metric of metrics">
+        <td>{{ metric.store }}</td>
+        <td>{{ metric.revenue | currency }}</td>
+        <td>{{ metric.transactions }}</td>
+        <td>{{ metric.conversion | number:'1.1-1' }}%</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

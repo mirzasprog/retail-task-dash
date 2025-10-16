@@ -1,0 +1,22 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>Task templates</h2>
+      <p>Build repeatable playbooks for every store scenario.</p>
+    </div>
+    <button class="primary">Create template</button>
+  </header>
+
+  <div class="templates">
+    <article class="card" *ngFor="let template of templates">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">{{ template.name }}</h3>
+          <p>{{ template.department }} • {{ template.cadence }}</p>
+        </div>
+        <button class="outline">Launch</button>
+      </div>
+      <p>{{ template.description }}</p>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+<aside class="sidebar">
+  <div class="sidebar__header">
+    <div class="logo">Retail<span>Dash</span></div>
+    <p class="subtitle">Operational command center</p>
+  </div>
+  <nav>
+    <a
+      *ngFor="let item of navigation"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <span class="material-icons">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+</aside>

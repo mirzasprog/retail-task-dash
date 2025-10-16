@@ -1,0 +1,30 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>Administration</h2>
+      <p>Manage roles, store assignments and platform access.</p>
+    </div>
+    <button class="primary">Invite user</button>
+  </header>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Store / Region</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.store || '—' }}</td>
+        <td><button class="outline">Edit</button></td>
+      </tr>
+    </tbody>
+  </table>
+</section>

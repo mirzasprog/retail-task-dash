@@ -1,0 +1,48 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dashboard__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 4rem 0;
+  color: var(--color-muted);
+  gap: 1rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(148, 163, 184, 0.25);
+  border-top-color: #6366f1;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 992px) {
+  .dashboard__meta,
+  .quick-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
