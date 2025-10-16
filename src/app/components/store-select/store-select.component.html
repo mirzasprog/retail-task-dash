@@ -1,0 +1,12 @@
+<label class="store-select">
+  <span class="label">Store</span>
+  <select
+    [ngModel]="selectedStoreId"
+    (ngModelChange)="onSelect($event)"
+  >
+    <option [ngValue]="null" disabled>Select a store</option>
+    <option *ngFor="let store of stores" [value]="store.id">
+      {{ store.name }} • {{ store.location }}
+    </option>
+  </select>
+</label>

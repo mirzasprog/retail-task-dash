@@ -1,0 +1,48 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>Price intelligence</h2>
+      <p>Instantly compare store, online and competitor pricing.</p>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="card form">
+    <div class="form__group">
+      <label>SKU / UPC</label>
+      <input formControlName="sku" placeholder="e.g. 193-447-778" />
+      <small *ngIf="form.get('sku')?.invalid && form.get('sku')?.touched">Required</small>
+    </div>
+    <div class="form__group">
+      <label>Store ID</label>
+      <input formControlName="storeId" placeholder="e.g. store-001" />
+      <small *ngIf="form.get('storeId')?.invalid && form.get('storeId')?.touched">Required</small>
+    </div>
+    <button class="primary" type="submit" [disabled]="isLoading">
+      {{ isLoading ? 'Checking…' : 'Compare pricing' }}
+    </button>
+  </form>
+
+  <div *ngIf="result" class="card result">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">{{ result.name }}</h3>
+        <p>SKU {{ result.sku }}</p>
+      </div>
+      <button class="outline">Sync to POS</button>
+    </div>
+    <div class="result__grid">
+      <div>
+        <span class="label">Store price</span>
+        <strong>{{ result.storePrice | currency }}</strong>
+      </div>
+      <div>
+        <span class="label">E-commerce</span>
+        <strong>{{ result.onlinePrice | currency }}</strong>
+      </div>
+      <div>
+        <span class="label">Competitor</span>
+        <strong>{{ result.competitorPrice | currency }}</strong>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 520px;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+input {
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--color-text);
+}
+
+input:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+small {
+  color: #f87171;
+}
+
+.result__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.label {
+  color: var(--color-muted);
+  display: block;
+  margin-bottom: 0.25rem;
+}

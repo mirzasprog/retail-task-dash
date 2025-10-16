@@ -1,0 +1,15 @@
+.not-found {
+  display: grid;
+  place-items: center;
+  height: calc(100vh - 240px);
+}
+
+h2 {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+}
+
+p {
+  color: var(--color-muted);
+  margin-bottom: 1.5rem;
+}

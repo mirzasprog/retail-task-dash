@@ -1,0 +1,24 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>Task map</h2>
+      <p>Monitor field execution hotspots across the network.</p>
+    </div>
+    <button class="outline">Open live map</button>
+  </header>
+  <div class="map">
+    <div class="map__preview">
+      <p class="placeholder">Interactive map preview unavailable offline.</p>
+    </div>
+    <div class="clusters">
+      <article *ngFor="let cluster of clusters" class="cluster">
+        <h3>{{ cluster.store }}</h3>
+        <p>{{ cluster.city }}</p>
+        <div class="stats">
+          <span><strong>{{ cluster.tasksDue }}</strong> open tasks</span>
+          <span class="critical">{{ cluster.critical }} critical</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

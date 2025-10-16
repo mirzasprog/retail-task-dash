@@ -1,0 +1,39 @@
+<section class="dashboard" *ngIf="!loading; else loadingState">
+  <div class="dashboard__meta">
+    <app-store-select
+      [stores]="stores"
+      [selectedStoreId]="selectedStoreId"
+      (selectedStoreChange)="onStoreChange($event)"
+    ></app-store-select>
+    <div class="quick-actions">
+      <button class="outline">Export report</button>
+      <button class="primary">Schedule briefing</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3">
+    <ng-container *ngIf="kpis$ | async as kpis">
+      <app-kpi-card *ngFor="let metric of kpis" [metric]="metric"></app-kpi-card>
+    </ng-container>
+  </div>
+
+  <div class="grid grid-cols-2">
+    <app-task-list
+      title="My day"
+      [tasks]="(todayTasks$ | async) ?? []"
+    ></app-task-list>
+
+    <app-trend-chart
+      [sales]="(sales$ | async) ?? []"
+    ></app-trend-chart>
+  </div>
+
+  <app-sales-table [categories]="(categories$ | async) ?? []"></app-sales-table>
+</section>
+
+<ng-template #loadingState>
+  <div class="loading">
+    <div class="spinner"></div>
+    Loading dashboard insights…
+  </div>
+</ng-template>
