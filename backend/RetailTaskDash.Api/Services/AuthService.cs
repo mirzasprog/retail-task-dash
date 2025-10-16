@@ -18,7 +18,7 @@ public class AuthService
     public async Task<UserAccount?> AuthenticateAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.Trim().ToLowerInvariant();
-        var user = await _context.Users
+        var user = await _context.UserAccounts
             .AsNoTracking()
             .SingleOrDefaultAsync(account => account.Email.ToLowerInvariant() == normalizedEmail, cancellationToken);
 

@@ -10,9 +10,9 @@ public class RetailTaskDashContext : DbContext
     {
     }
 
-    public DbSet<Store> Stores => Set<Store>();
-    public DbSet<TaskAssignment> Tasks => Set<TaskAssignment>();
-    public DbSet<KpiSnapshot> Kpis => Set<KpiSnapshot>();
-    public DbSet<SalesSnapshot> Sales => Set<SalesSnapshot>();
-    public DbSet<UserAccount> Users => Set<UserAccount>();
+    public DbSet<Store> Stores { get; set; } = null!;
+    public DbSet<TaskAssignment> Tasks { get; set; } = null!;
+    public DbSet<KpiSnapshot> Kpis { get; set; } = null!;
+    public DbSet<SalesSnapshot> Sales { get; set; } = null!;
+    public DbSet<UserAccount> UserAccounts { get; set; } = null!;
 }
