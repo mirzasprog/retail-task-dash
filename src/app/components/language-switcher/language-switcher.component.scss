@@ -1,0 +1,25 @@
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+
+  span.material-icons {
+    font-size: 1rem;
+  }
+
+  select {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 0.875rem;
+    outline: none;
+    appearance: none;
+    padding-right: 0.75rem;
+    cursor: pointer;
+  }
+}

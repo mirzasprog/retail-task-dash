@@ -1,0 +1,30 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>{{ 'admin.title' | translate }}</h2>
+      <p>{{ 'admin.subtitle' | translate }}</p>
+    </div>
+    <button class="primary" type="button">{{ 'admin.invite' | translate }}</button>
+  </header>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{ 'admin.table.headers.name' | translate }}</th>
+        <th>{{ 'admin.table.headers.email' | translate }}</th>
+        <th>{{ 'admin.table.headers.role' | translate }}</th>
+        <th>{{ 'admin.table.headers.store' | translate }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ ('admin.roles.' + user.roleKey) | translate }}</td>
+        <td>{{ user.store || ('admin.table.unassigned' | translate) }}</td>
+        <td><button class="outline" type="button">{{ 'admin.actions.edit' | translate }}</button></td>
+      </tr>
+    </tbody>
+  </table>
+</section>

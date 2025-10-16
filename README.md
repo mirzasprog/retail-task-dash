@@ -1,73 +1,79 @@
-# Welcome to your Lovable project
+# Retail Task Dash (Angular 12 + ASP.NET 6)
 
-## Project info
+This repository now hosts an Angular 12 front-end paired with an ASP.NET 6 backend. The UI recreates the original Retail Task Dash experience in Angular, including dashboards, task orchestration, pricing intelligence, and administrative flows.
 
-**URL**: https://lovable.dev/projects/cf6345ec-414e-4f7c-826b-9c55718ae14a
+## Front-end
 
-## How can I edit this code?
+The Angular client lives at the repository root. Key areas of interest:
 
-There are several ways of editing your application.
+- `src/app/components` – shared layout elements, KPI cards, charts, lists, and form helpers.
+- `src/app/pages` – feature screens including dashboard analytics, task templates, task map, pricing tool, daily sales, admin, and authentication views.
+- `src/app/core/services` – data services that communicate with the ASP.NET backend. `AuthService` persists session state and adds authentication helpers for the UI.
+- `src/assets/i18n` – English and Bosnian localisation resources consumed by the in-app language switcher.
 
-**Use Lovable**
+### Commands
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/cf6345ec-414e-4f7c-826b-9c55718ae14a) and start prompting.
+Because network access is disabled in this environment, the Angular CLI dependencies are declared but not installed. When running locally with internet access:
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+npm install
 ```
 
-**Edit a file directly in GitHub**
+To start the client during development you can either use the Angular CLI directly or the helper script defined in `package.json`:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+ng serve
+# or
+npm run start
+```
 
-**Use GitHub Codespaces**
+Both options host the UI at `http://localhost:4200` by default.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Backend
 
-## What technologies are used for this project?
+The backend source is under `backend/RetailTaskDash.Api`. It is an ASP.NET 6 minimal Web API that exposes SQL-backed endpoints for the Angular application.
 
-This project is built with:
+### Development
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Restore dependencies: `dotnet restore`
+2. Apply EF Core migrations or run the seed script in `Database/seed.sql`.
+3. Start the API: `dotnet run --project backend/RetailTaskDash.Api`
 
-## How can I deploy this project?
+The repository ships with a `launchSettings.json` profile that pins the development URLs to `https://localhost:49676` and `http://localhost:49675`. The Angular app points to the HTTPS endpoint (`https://localhost:49676/api`) out of the box so the services begin talking as soon as both processes are up.
 
-Simply open [Lovable](https://lovable.dev/projects/cf6345ec-414e-4f7c-826b-9c55718ae14a) and click on Share -> Publish.
+> **Tip:** the first time you run on HTTPS you may need to trust the ASP.NET Core development certificate:
+> ```bash
+> dotnet dev-certs https --trust
+> ```
+> If you prefer to work without HTTPS locally, switch the Angular environment to `http://localhost:49675/api` or launch the "RetailTaskDash.Api (http)" profile from Visual Studio.
 
-## Can I connect a custom domain to my Lovable project?
+### Running with Visual Studio
 
-Yes, you can!
+Open `backend/RetailTaskDash.sln` in Visual Studio 2022 (or newer) and choose the **RetailTaskDash.Api** profile. Press **F5** to run the API on the same ports the Angular app expects. You can continue to serve the front-end separately with `ng serve`.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The Angular app expects the API at `https://localhost:49676/api` (update `src/environments` if you expose the backend elsewhere).
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Authentication
+
+Seed data creates a default supervisor account:
+
+- Email: `store.manager@retaildash.com`
+- Password: `Retail123!`
+
+Use these credentials on the Angular login screen to load live dashboard data. All other endpoints remain open for now.
+
+## Database
+
+Supabase has been removed. The backend now uses SQL Server (or Azure SQL) via Entity Framework Core. Configure the connection string in `appsettings.Development.json`.
+
+## Testing
+
+Tests require the Angular CLI and .NET SDK. Install the prerequisites and run:
+
+```bash
+npm run test
+```
+
+```bash
+dotnet test backend/RetailTaskDash.sln
+```

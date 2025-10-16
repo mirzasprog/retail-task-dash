@@ -1,0 +1,48 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>{{ 'priceChecker.title' | translate }}</h2>
+      <p>{{ 'priceChecker.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="card form">
+    <div class="form__group">
+      <label>{{ 'priceChecker.labels.sku' | translate }}</label>
+      <input formControlName="sku" [placeholder]="'priceChecker.placeholders.sku' | translate" />
+      <small *ngIf="form.get('sku')?.invalid && form.get('sku')?.touched">{{ 'priceChecker.errors.required' | translate }}</small>
+    </div>
+    <div class="form__group">
+      <label>{{ 'priceChecker.labels.storeId' | translate }}</label>
+      <input formControlName="storeId" [placeholder]="'priceChecker.placeholders.storeId' | translate" />
+      <small *ngIf="form.get('storeId')?.invalid && form.get('storeId')?.touched">{{ 'priceChecker.errors.required' | translate }}</small>
+    </div>
+    <button class="primary" type="submit" [disabled]="isLoading">
+      {{ isLoading ? ('priceChecker.loading' | translate) : ('priceChecker.submit' | translate) }}
+    </button>
+  </form>
+
+  <div *ngIf="result" class="card result">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">{{ result.name }}</h3>
+        <p>{{ 'priceChecker.result.sku' | translate:{ sku: result.sku } }}</p>
+      </div>
+      <button class="outline" type="button">{{ 'priceChecker.result.sync' | translate }}</button>
+    </div>
+    <div class="result__grid">
+      <div>
+        <span class="label">{{ 'priceChecker.result.storePrice' | translate }}</span>
+        <strong>{{ formatPrice(result.storePrice) }}</strong>
+      </div>
+      <div>
+        <span class="label">{{ 'priceChecker.result.onlinePrice' | translate }}</span>
+        <strong>{{ formatPrice(result.onlinePrice) }}</strong>
+      </div>
+      <div>
+        <span class="label">{{ 'priceChecker.result.competitorPrice' | translate }}</span>
+        <strong>{{ formatPrice(result.competitorPrice) }}</strong>
+      </div>
+    </div>
+  </div>
+</section>

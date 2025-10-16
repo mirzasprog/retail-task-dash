@@ -1,0 +1,29 @@
+<section class="auth">
+  <div class="auth__panel">
+    <div class="auth__language">
+      <app-language-switcher></app-language-switcher>
+    </div>
+    <h2>{{ 'auth.login.title' | translate }}</h2>
+    <p>{{ 'auth.login.subtitle' | translate }}</p>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <label>{{ 'auth.login.emailLabel' | translate }}</label>
+      <input type="email" formControlName="email" placeholder="you@retaildash.com" />
+      <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched">{{ 'auth.login.emailError' | translate }}</small>
+
+      <label>{{ 'auth.login.passwordLabel' | translate }}</label>
+      <input type="password" formControlName="password" placeholder="••••••••" />
+      <small *ngIf="form.get('password')?.invalid && form.get('password')?.touched">{{ 'auth.login.passwordError' | translate }}</small>
+
+      <button class="primary" type="submit" [disabled]="loading">
+        <span *ngIf="!loading">{{ 'auth.login.submit' | translate }}</span>
+        <span *ngIf="loading">{{ 'auth.login.loading' | translate }}</span>
+      </button>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <a routerLink="/forgot-password" class="link">{{ 'auth.login.forgot' | translate }}</a>
+    </form>
+  </div>
+  <div class="auth__hero">
+    <p>{{ 'auth.hero' | translate }}</p>
+  </div>
+</section>

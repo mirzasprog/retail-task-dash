@@ -1,0 +1,198 @@
+{
+  "header": {
+    "welcome": "Dobrodošli nazad, {{name}} 👋",
+    "fallbackName": "rukovodilac maloprodaje",
+    "fallbackRole": "Operater",
+    "support": "Podrška",
+    "newTask": "Novi zadatak",
+    "logout": "Odjava"
+  },
+  "language": {
+    "english": "Engleski",
+    "bosnian": "Bosanski"
+  },
+  "navigation": {
+    "subtitle": "Operativni komandni centar",
+    "dashboard": "Kontrolna tabla",
+    "taskTemplates": "Šabloni zadataka",
+    "taskMap": "Mapa zadataka",
+    "dailySales": "Dnevna prodaja",
+    "priceChecker": "Provjera cijena",
+    "admin": "Administracija"
+  },
+  "dashboard": {
+    "loading": "Učitavanje uvida sa kontrolne table…",
+    "storeSelector": {
+      "label": "Prodavnica",
+      "placeholder": "Odaberite prodavnicu"
+    },
+    "actions": {
+      "export": "Izvezi izvještaj",
+      "schedule": "Zakaži brifing"
+    },
+    "tasks": {
+      "myDay": "Moj dan",
+      "viewAll": "Prikaži sve",
+      "empty": "Nema zakazanih zadataka."
+    },
+    "trends": {
+      "title": "Učinkovitost odjela",
+      "subtitle": "Odstupanje od plana po ključnim odjelima"
+    },
+    "sales": {
+      "title": "Doprinos kategorija",
+      "export": "Preuzmi CSV",
+      "headers": {
+        "category": "Kategorija",
+        "sales": "Prodaja",
+        "contribution": "Doprinos"
+      },
+      "empty": "Nema dostupnih podataka o prodaji."
+    },
+    "kpis": {
+      "daily-revenue": "Dnevni prihod",
+      "conversion-rate": "Stopa konverzije",
+      "avg-basket-size": "Prosječna vrijednost korpe",
+      "vs-yesterday": "u odnosu na jučer"
+    }
+  },
+  "tasks": {
+    "priority": {
+      "high": "Visok",
+      "medium": "Srednji",
+      "low": "Nizak"
+    }
+  },
+  "auth": {
+    "hero": "Orkestracija zadataka u stvarnom vremenu za maloprodajne timove.",
+    "login": {
+      "title": "Retail Task Dash",
+      "subtitle": "Prijavite se za upravljanje radom prodavnica.",
+      "emailLabel": "Email",
+      "emailError": "Unesite ispravan email",
+      "passwordLabel": "Lozinka",
+      "passwordError": "Lozinka je obavezna",
+      "submit": "Prijava",
+      "loading": "Prijava u toku…",
+      "forgot": "Zaboravljena lozinka?",
+      "error": "Nismo mogli potvrditi te pristupne podatke."
+    },
+    "forgot": {
+      "title": "Resetovanje pristupa",
+      "subtitle": "Unesite email da biste dobili uputstva za resetovanje lozinke.",
+      "emailLabel": "Email",
+      "emailError": "Unesite ispravan email",
+      "submit": "Pošalji link za resetovanje",
+      "back": "Nazad na prijavu",
+      "confirmation": "Poslali smo vam sigurnosni link. Provjerite inbox."
+    },
+    "reset": {
+      "title": "Kreirajte novu lozinku",
+      "subtitle": "Odaberite jaku lozinku za svoj Retail Task Dash nalog.",
+      "passwordLabel": "Nova lozinka",
+      "passwordError": "Najmanje 8 znakova",
+      "confirmLabel": "Potvrdite lozinku",
+      "confirmError": "Lozinke se moraju podudarati",
+      "submit": "Resetuj lozinku",
+      "back": "Povratak na prijavu",
+      "confirmation": "Lozinka je ažurirana. Sada se možete prijaviti."
+    }
+  },
+  "priceChecker": {
+    "title": "Cjenovna inteligencija",
+    "subtitle": "Odmah uporedite cijene u prodavnici, online i kod konkurenata.",
+    "labels": {
+      "sku": "SKU / UPC",
+      "storeId": "ID prodavnice"
+    },
+    "placeholders": {
+      "sku": "npr. 193-447-778",
+      "storeId": "npr. store-001"
+    },
+    "errors": {
+      "required": "Obavezno polje"
+    },
+    "submit": "Uporedi cijene",
+    "loading": "Provjera…",
+    "result": {
+      "sku": "SKU {{sku}}",
+      "sync": "Sinhronizuj sa POS-om",
+      "storePrice": "Cijena u prodavnici",
+      "onlinePrice": "E-trgovina",
+      "competitorPrice": "Konkurencija"
+    }
+  },
+  "taskTemplates": {
+    "title": "Šabloni zadataka",
+    "subtitle": "Izgradite ponovljive planove za svaku situaciju u prodavnici.",
+    "create": "Kreiraj šablon",
+    "launch": "Pokreni",
+    "templates": {
+      "dailyOpening": {
+        "name": "Dnevna lista otvaranja",
+        "description": "Inventura, provjera POS-a i obilazak zona.",
+        "department": "Operacije",
+        "cadence": "Dnevno"
+      },
+      "weeklyVisual": {
+        "name": "Sedmično vizuelno resetovanje",
+        "description": "Osvježite ključne stolove, izloge i promotivne zone.",
+        "department": "Vizuelni merchandising",
+        "cadence": "Sedmično"
+      },
+      "quarterlySafety": {
+        "name": "Kvartalni sigurnosni audit",
+        "description": "Provjera opreme za hitne slučajeve, obrasci usklađenosti i signalizacija.",
+        "department": "Usklađenost",
+        "cadence": "Kvartalno"
+      }
+    }
+  },
+  "taskMap": {
+    "title": "Mapa zadataka",
+    "subtitle": "Pratite kritične tačke izvršenja na terenu.",
+    "cta": "Otvori mapu uživo",
+    "placeholder": "Interaktivni prikaz mape nije dostupan offline.",
+    "cluster": {
+      "openTasks": "{{count}} otvorenih zadataka",
+      "critical": "{{count}} kritičnih"
+    }
+  },
+  "dailySales": {
+    "title": "Dnevne performanse prodaje",
+    "subtitle": "Pregled u stvarnom vremenu prihoda, transakcija i konverzije.",
+    "export": "Izvezi dnevni izvještaj",
+    "headers": {
+      "store": "Prodavnica",
+      "revenue": "Prihod",
+      "transactions": "Transakcije",
+      "conversion": "Konverzija"
+    }
+  },
+  "admin": {
+    "title": "Administracija",
+    "subtitle": "Upravljajte ulogama, prodavnicama i pristupima platformi.",
+    "invite": "Pozovi korisnika",
+    "table": {
+      "headers": {
+        "name": "Ime",
+        "email": "Email",
+        "role": "Uloga",
+        "store": "Prodavnica / Regija"
+      },
+      "unassigned": "Nedodijeljeno"
+    },
+    "actions": {
+      "edit": "Uredi"
+    },
+    "roles": {
+      "hqAdmin": "HQ administrator",
+      "regionalSupervisor": "Regionalni supervizor",
+      "storeManager": "Menadžer prodavnice"
+    }
+  },
+  "notFound": {
+    "message": "Stranica koju tražite je premještena ili nikada nije postojala.",
+    "back": "Nazad na kontrolnu tablu"
+  }
+}

@@ -1,0 +1,27 @@
+<div class="chart">
+  <div class="chart__header">
+    <h3 class="section-title">{{ 'dashboard.trends.title' | translate }}</h3>
+    <p>{{ 'dashboard.trends.subtitle' | translate }}</p>
+  </div>
+  <div class="chart__body">
+    <div *ngFor="let record of sales" class="bar">
+      <div class="bar__label">
+        <span>{{ record.department }}</span>
+        <span>{{ formatSales(record) }}</span>
+      </div>
+      <div class="bar__track">
+        <div
+          class="bar__fill"
+          [ngClass]="record.trend"
+          [style.width.%]="Math.min(Math.abs(record.variance) * 6, 100)"
+        ></div>
+      </div>
+      <div class="bar__variance" [ngClass]="record.trend">
+        <span class="material-icons">
+          {{ record.trend === 'up' ? 'trending_up' : 'trending_down' }}
+        </span>
+        {{ record.variance | number:'1.0-1' }}%
+      </div>
+    </div>
+  </div>
+</div>

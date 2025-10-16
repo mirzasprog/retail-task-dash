@@ -1,0 +1,8 @@
+<label class="language-switcher">
+  <span class="material-icons">language</span>
+  <select [ngModel]="selectedLanguage" (ngModelChange)="onLanguageChange($event)">
+    <option *ngFor="let language of languages" [value]="language.code">
+      {{ language.label | translate }}
+    </option>
+  </select>
+</label>

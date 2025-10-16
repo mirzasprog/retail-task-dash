@@ -1,0 +1,28 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>{{ 'dailySales.title' | translate }}</h2>
+      <p>{{ 'dailySales.subtitle' | translate }}</p>
+    </div>
+    <button class="primary" type="button">{{ 'dailySales.export' | translate }}</button>
+  </header>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{ 'dailySales.headers.store' | translate }}</th>
+        <th>{{ 'dailySales.headers.revenue' | translate }}</th>
+        <th>{{ 'dailySales.headers.transactions' | translate }}</th>
+        <th>{{ 'dailySales.headers.conversion' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let metric of metrics">
+        <td>{{ metric.store }}</td>
+        <td>{{ formatRevenue(metric) }}</td>
+        <td>{{ metric.transactions }}</td>
+        <td>{{ metric.conversion | number:'1.1-1' }}%</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

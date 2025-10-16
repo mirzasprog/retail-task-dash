@@ -1,0 +1,198 @@
+{
+  "header": {
+    "welcome": "Welcome back, {{name}} 👋",
+    "fallbackName": "Retail leader",
+    "fallbackRole": "Operator",
+    "support": "Support",
+    "newTask": "New task",
+    "logout": "Sign out"
+  },
+  "language": {
+    "english": "English",
+    "bosnian": "Bosnian"
+  },
+  "navigation": {
+    "subtitle": "Operational command center",
+    "dashboard": "Dashboard",
+    "taskTemplates": "Task templates",
+    "taskMap": "Task map",
+    "dailySales": "Daily sales",
+    "priceChecker": "Price checker",
+    "admin": "Admin"
+  },
+  "dashboard": {
+    "loading": "Loading dashboard insights…",
+    "storeSelector": {
+      "label": "Store",
+      "placeholder": "Select a store"
+    },
+    "actions": {
+      "export": "Export report",
+      "schedule": "Schedule briefing"
+    },
+    "tasks": {
+      "myDay": "My day",
+      "viewAll": "View all",
+      "empty": "No tasks scheduled."
+    },
+    "trends": {
+      "title": "Department performance",
+      "subtitle": "Variance vs plan by key departments"
+    },
+    "sales": {
+      "title": "Category contribution",
+      "export": "Download CSV",
+      "headers": {
+        "category": "Category",
+        "sales": "Sales",
+        "contribution": "Contribution"
+      },
+      "empty": "No sales data available."
+    },
+    "kpis": {
+      "daily-revenue": "Daily revenue",
+      "conversion-rate": "Conversion rate",
+      "avg-basket-size": "Average basket size",
+      "vs-yesterday": "vs yesterday"
+    }
+  },
+  "tasks": {
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "auth": {
+    "hero": "Real-time task orchestration for enterprise retail teams.",
+    "login": {
+      "title": "Retail Task Dash",
+      "subtitle": "Sign in to orchestrate store execution.",
+      "emailLabel": "Email",
+      "emailError": "Valid email required",
+      "passwordLabel": "Password",
+      "passwordError": "Password required",
+      "submit": "Sign in",
+      "loading": "Signing in…",
+      "forgot": "Forgot password?",
+      "error": "We couldn't verify those credentials."
+    },
+    "forgot": {
+      "title": "Reset access",
+      "subtitle": "Enter your email to receive password reset instructions.",
+      "emailLabel": "Email",
+      "emailError": "Valid email required",
+      "submit": "Send reset link",
+      "back": "Back to login",
+      "confirmation": "We sent you a secure link. Please check your inbox."
+    },
+    "reset": {
+      "title": "Create new password",
+      "subtitle": "Choose a strong passphrase for your Retail Task Dash account.",
+      "passwordLabel": "New password",
+      "passwordError": "Minimum 8 characters",
+      "confirmLabel": "Confirm password",
+      "confirmError": "Passwords must match",
+      "submit": "Reset password",
+      "back": "Return to login",
+      "confirmation": "Password updated. You can now sign in."
+    }
+  },
+  "priceChecker": {
+    "title": "Price intelligence",
+    "subtitle": "Instantly compare store, online and competitor pricing.",
+    "labels": {
+      "sku": "SKU / UPC",
+      "storeId": "Store ID"
+    },
+    "placeholders": {
+      "sku": "e.g. 193-447-778",
+      "storeId": "e.g. store-001"
+    },
+    "errors": {
+      "required": "Required"
+    },
+    "submit": "Compare pricing",
+    "loading": "Checking…",
+    "result": {
+      "sku": "SKU {{sku}}",
+      "sync": "Sync to POS",
+      "storePrice": "Store price",
+      "onlinePrice": "E-commerce",
+      "competitorPrice": "Competitor"
+    }
+  },
+  "taskTemplates": {
+    "title": "Task templates",
+    "subtitle": "Build repeatable playbooks for every store scenario.",
+    "create": "Create template",
+    "launch": "Launch",
+    "templates": {
+      "dailyOpening": {
+        "name": "Daily Opening Checklist",
+        "description": "Inventory counts, POS checks and zone walkthrough.",
+        "department": "Operations",
+        "cadence": "Daily"
+      },
+      "weeklyVisual": {
+        "name": "Weekly Visual Reset",
+        "description": "Refresh key tables, windows and promotional zones.",
+        "department": "Visual merchandising",
+        "cadence": "Weekly"
+      },
+      "quarterlySafety": {
+        "name": "Quarterly Safety Audit",
+        "description": "Emergency equipment, compliance forms and signage.",
+        "department": "Compliance",
+        "cadence": "Quarterly"
+      }
+    }
+  },
+  "taskMap": {
+    "title": "Task map",
+    "subtitle": "Monitor field execution hotspots across the network.",
+    "cta": "Open live map",
+    "placeholder": "Interactive map preview unavailable offline.",
+    "cluster": {
+      "openTasks": "{{count}} open tasks",
+      "critical": "{{count}} critical"
+    }
+  },
+  "dailySales": {
+    "title": "Daily sales performance",
+    "subtitle": "Live view of revenue, transactions and conversion.",
+    "export": "Export daily recap",
+    "headers": {
+      "store": "Store",
+      "revenue": "Revenue",
+      "transactions": "Transactions",
+      "conversion": "Conversion"
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "subtitle": "Manage roles, store assignments and platform access.",
+    "invite": "Invite user",
+    "table": {
+      "headers": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "store": "Store / Region"
+      },
+      "unassigned": "Unassigned"
+    },
+    "actions": {
+      "edit": "Edit"
+    },
+    "roles": {
+      "hqAdmin": "HQ Admin",
+      "regionalSupervisor": "Regional Supervisor",
+      "storeManager": "Store Manager"
+    }
+  },
+  "notFound": {
+    "message": "The page you were looking for has moved or never existed.",
+    "back": "Return to dashboard"
+  }
+}

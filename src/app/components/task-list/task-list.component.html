@@ -1,0 +1,32 @@
+<div class="card task-list">
+  <div class="card-header">
+    <h3 class="card-title">{{ title }}</h3>
+    <button class="outline">{{ 'dashboard.tasks.viewAll' | translate }}</button>
+  </div>
+  <div class="task-list__body" *ngIf="tasks.length; else emptyState">
+    <div *ngFor="let task of tasks" class="task">
+      <div class="task__status" [ngClass]="task.status"></div>
+      <div class="task__content">
+        <div class="task__title">{{ task.title }}</div>
+        <div class="task__meta">
+          <span class="material-icons">schedule</span>
+          {{ task.dueDate | date:'shortTime':undefined:currentLocale }}
+        </div>
+        <div class="task__meta" *ngIf="task.assignedTo">
+          <span class="material-icons">person</span>
+          {{ task.assignedTo }}
+        </div>
+      </div>
+      <div class="badge" [ngClass]="{
+        success: task.priority === 'low',
+        warning: task.priority === 'medium',
+        danger: task.priority === 'high'
+      }">
+        {{ ('tasks.priority.' + task.priority) | translate }}
+      </div>
+    </div>
+  </div>
+  <ng-template #emptyState>
+    <p class="empty">{{ 'dashboard.tasks.empty' | translate }}</p>
+  </ng-template>
+</div>

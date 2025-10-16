@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{ 'dashboard.sales.title' | translate }}</h3>
+    <button class="outline" type="button">{{ 'dashboard.sales.export' | translate }}</button>
+  </div>
+  <table class="table" *ngIf="categories.length; else emptyState">
+    <thead>
+      <tr>
+        <th>{{ 'dashboard.sales.headers.category' | translate }}</th>
+        <th>{{ 'dashboard.sales.headers.sales' | translate }}</th>
+        <th>{{ 'dashboard.sales.headers.contribution' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let category of categories">
+        <td>{{ category.category }}</td>
+        <td>{{ formatSales(category) }}</td>
+        <td>
+          <div class="progress">
+            <div class="progress__fill" [style.width.%]="category.percentage"></div>
+          </div>
+          {{ category.percentage }}%
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #emptyState>
+    <p class="empty">{{ 'dashboard.sales.empty' | translate }}</p>
+  </ng-template>
+</div>

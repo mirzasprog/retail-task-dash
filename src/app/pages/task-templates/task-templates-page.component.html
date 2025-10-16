@@ -1,0 +1,22 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>{{ 'taskTemplates.title' | translate }}</h2>
+      <p>{{ 'taskTemplates.subtitle' | translate }}</p>
+    </div>
+    <button class="primary" type="button">{{ 'taskTemplates.create' | translate }}</button>
+  </header>
+
+  <div class="templates">
+    <article class="card" *ngFor="let template of templates">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">{{ template.nameKey | translate }}</h3>
+          <p>{{ template.departmentKey | translate }} • {{ template.cadenceKey | translate }}</p>
+        </div>
+        <button class="outline" type="button">{{ 'taskTemplates.launch' | translate }}</button>
+      </div>
+      <p>{{ template.descriptionKey | translate }}</p>
+    </article>
+  </div>
+</section>

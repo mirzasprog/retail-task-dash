@@ -1,0 +1,24 @@
+<header class="header">
+  <ng-container *ngIf="user$ | async as user; else guestHeader">
+    <div>
+      <h1>{{ 'header.welcome' | translate:{ name: user.displayName } }}</h1>
+      <p>
+        {{ user.role }} • {{ today | date:'fullDate':undefined:currentLocale }}
+      </p>
+    </div>
+  </ng-container>
+  <ng-template #guestHeader>
+    <div>
+      <h1>{{ 'header.welcome' | translate:{ name: ('header.fallbackName' | translate) } }}</h1>
+      <p>
+        {{ 'header.fallbackRole' | translate }} • {{ today | date:'fullDate':undefined:currentLocale }}
+      </p>
+    </div>
+  </ng-template>
+  <div class="actions">
+    <app-language-switcher></app-language-switcher>
+    <button class="outline" type="button">{{ 'header.support' | translate }}</button>
+    <button class="primary" type="button">{{ 'header.newTask' | translate }}</button>
+    <button class="outline" type="button" (click)="logout()">{{ 'header.logout' | translate }}</button>
+  </div>
+</header>

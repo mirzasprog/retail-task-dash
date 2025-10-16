@@ -1,0 +1,13 @@
+<div class="card kpi">
+  <div class="kpi__icon">
+    <span class="material-icons">{{ icon(metric) }}</span>
+  </div>
+  <div class="kpi__content">
+    <div class="label">{{ 'dashboard.kpis.' + metricKey(metric) | translate }}</div>
+    <div class="value">{{ formatValue(metric) }}</div>
+    <div class="trend" [ngClass]="metric.trend">
+      <span class="material-icons">{{ metric.trend === 'up' ? 'arrow_upward' : 'arrow_downward' }}</span>
+      {{ metric.change | number:'1.0-1' }}% {{ 'dashboard.kpis.vs-yesterday' | translate }}
+    </div>
+  </div>
+</div>

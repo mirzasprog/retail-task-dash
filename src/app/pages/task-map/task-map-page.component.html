@@ -1,0 +1,24 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h2>{{ 'taskMap.title' | translate }}</h2>
+      <p>{{ 'taskMap.subtitle' | translate }}</p>
+    </div>
+    <button class="outline" type="button">{{ 'taskMap.cta' | translate }}</button>
+  </header>
+  <div class="map">
+    <div class="map__preview">
+      <p class="placeholder">{{ 'taskMap.placeholder' | translate }}</p>
+    </div>
+    <div class="clusters">
+      <article *ngFor="let cluster of clusters" class="cluster">
+        <h3>{{ cluster.store }}</h3>
+        <p>{{ cluster.city }}</p>
+        <div class="stats">
+          <span>{{ 'taskMap.cluster.openTasks' | translate:{ count: cluster.tasksDue } }}</span>
+          <span class="critical">{{ 'taskMap.cluster.critical' | translate:{ count: cluster.critical } }}</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
