@@ -6,6 +6,7 @@ export interface SalesRecord {
   target: number;
   variance: number;
   trend: 'up' | 'down';
+  contribution?: number;
 }
 
 export interface SalesCategoryBreakdown {

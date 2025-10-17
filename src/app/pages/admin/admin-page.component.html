@@ -1,30 +1,89 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <h2>Administration</h2>
-      <p>Manage roles, store assignments and platform access.</p>
-    </div>
-    <button class="primary">Invite user</button>
+<section class="admin">
+  <header>
+    <h1>Administracija sustava</h1>
   </header>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Store / Region</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
-        <td>{{ user.store || '—' }}</td>
-        <td><button class="outline">Edit</button></td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="grid">
+    <section>
+      <h2>Novi dućan</h2>
+      <form [formGroup]="storeForm" (ngSubmit)="createStore()">
+        <label>Naziv</label>
+        <input type="text" formControlName="name" />
+
+        <label>Lokacija</label>
+        <input type="text" formControlName="location" />
+
+        <label>Regija</label>
+        <select formControlName="regionId">
+          <option value="" disabled>Odaberite regiju</option>
+          <option *ngFor="let region of regions" [value]="region.id">{{ region.name }}</option>
+        </select>
+
+        <button type="submit" class="primary">Dodaj dućan</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Novi korisnik</h2>
+      <form [formGroup]="userForm" (ngSubmit)="createUser()">
+        <label>Ime i prezime</label>
+        <input type="text" formControlName="fullName" />
+
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+
+        <label>Lozinka</label>
+        <input type="password" formControlName="password" />
+
+        <label>Rola</label>
+        <select formControlName="role">
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+
+        <label>Regija (opcionalno)</label>
+        <select formControlName="regionId">
+          <option value="">--</option>
+          <option *ngFor="let region of regions" [value]="region.id">{{ region.name }}</option>
+        </select>
+
+        <label>Dućani (opcionalno)</label>
+        <select formControlName="storeIds" multiple size="4">
+          <option *ngFor="let store of stores" [value]="store.id">{{ store.name }}</option>
+        </select>
+
+        <button type="submit" class="primary">Dodaj korisnika</button>
+      </form>
+    </section>
+  </div>
+
+  <section class="list">
+    <h2>Aktivni korisnici</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Ime</th>
+          <th>Email</th>
+          <th>Rola</th>
+          <th>Dodijeljeni dućani</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <ng-container *ngIf="user.storeAssignments.length; else noStores">
+              <span *ngFor="let storeId of user.storeAssignments; let last = last">
+                {{ stores.find(s => s.id === storeId)?.name || storeId }}<span *ngIf="!last">, </span>
+              </span>
+            </ng-container>
+            <ng-template #noStores>
+              <span>-</span>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </section>

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SalesCategoryBreakdown } from '../../shared/models/sales.model';
+import { SalesRecord } from '../../shared/models/sales.model';
 
 @Component({
   selector: 'app-sales-table',
@@ -7,5 +7,5 @@ import { SalesCategoryBreakdown } from '../../shared/models/sales.model';
   styleUrls: ['./sales-table.component.scss']
 })
 export class SalesTableComponent {
-  @Input() categories: SalesCategoryBreakdown[] = [];
+  @Input() sales: SalesRecord[] = [];
 }

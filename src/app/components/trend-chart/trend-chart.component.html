@@ -7,7 +7,7 @@
     <div *ngFor="let record of sales" class="bar">
       <div class="bar__label">
         <span>{{ record.department }}</span>
-        <span>{{ record.sales | currency }}</span>
+        <span>{{ record.sales | number:'1.0-0' }} €</span>
       </div>
       <div class="bar__track">
         <div

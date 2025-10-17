@@ -3,23 +3,22 @@
     <h3 class="card-title">Category contribution</h3>
     <button class="outline">Download CSV</button>
   </div>
-  <table class="table" *ngIf="categories.length; else emptyState">
+  <table class="table" *ngIf="sales.length; else emptyState">
     <thead>
       <tr>
-        <th>Category</th>
-        <th>Sales</th>
-        <th>Contribution</th>
+        <th>Odjel</th>
+        <th>Prodaja</th>
+        <th>Target</th>
+        <th>Varijanca</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let category of categories">
-        <td>{{ category.category }}</td>
-        <td>{{ category.sales | currency }}</td>
-        <td>
-          <div class="progress">
-            <div class="progress__fill" [style.width.%]="category.percentage"></div>
-          </div>
-          {{ category.percentage }}%
+      <tr *ngFor="let record of sales">
+        <td>{{ record.department }}</td>
+        <td>{{ record.sales | number:'1.0-0' }}</td>
+        <td>{{ record.target | number:'1.0-0' }}</td>
+        <td [class.positive]="record.variance >= 0" [class.negative]="record.variance < 0">
+          {{ record.variance | number:'1.1-1' }}%
         </td>
       </tr>
     </tbody>

@@ -1,0 +1,133 @@
+-- RetailTaskDash database schema and seed data
+IF DB_ID(N'RetailTaskDash') IS NULL
+BEGIN
+    CREATE DATABASE RetailTaskDash;
+END
+GO
+
+USE RetailTaskDash;
+GO
+
+IF OBJECT_ID(N'dbo.UserStoreAssignments', 'U') IS NOT NULL DROP TABLE dbo.UserStoreAssignments;
+IF OBJECT_ID(N'dbo.TaskAssignments', 'U') IS NOT NULL DROP TABLE dbo.TaskAssignments;
+IF OBJECT_ID(N'dbo.KpiSnapshots', 'U') IS NOT NULL DROP TABLE dbo.KpiSnapshots;
+IF OBJECT_ID(N'dbo.SalesSnapshots', 'U') IS NOT NULL DROP TABLE dbo.SalesSnapshots;
+IF OBJECT_ID(N'dbo.Users', 'U') IS NOT NULL DROP TABLE dbo.Users;
+IF OBJECT_ID(N'dbo.Stores', 'U') IS NOT NULL DROP TABLE dbo.Stores;
+IF OBJECT_ID(N'dbo.Regions', 'U') IS NOT NULL DROP TABLE dbo.Regions;
+GO
+
+CREATE TABLE dbo.Regions
+(
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    Name NVARCHAR(128) NOT NULL
+);
+
+CREATE TABLE dbo.Stores
+(
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    Name NVARCHAR(128) NOT NULL,
+    Location NVARCHAR(256) NOT NULL,
+    RegionId UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Regions(Id)
+);
+
+CREATE TABLE dbo.Users
+(
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    Email NVARCHAR(256) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(128) NOT NULL,
+    FullName NVARCHAR(128) NOT NULL,
+    Role INT NOT NULL,
+    RegionId UNIQUEIDENTIFIER NULL REFERENCES dbo.Regions(Id),
+    StoreId UNIQUEIDENTIFIER NULL REFERENCES dbo.Stores(Id)
+);
+
+CREATE TABLE dbo.UserStoreAssignments
+(
+    UserId UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Users(Id),
+    StoreId UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Stores(Id),
+    PRIMARY KEY (UserId, StoreId)
+);
+
+CREATE TABLE dbo.KpiSnapshots
+(
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    StoreId UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Stores(Id),
+    Metric NVARCHAR(128) NOT NULL,
+    Value DECIMAL(18,2) NOT NULL,
+    Change DECIMAL(9,2) NOT NULL,
+    Trend NVARCHAR(16) NOT NULL,
+    Status NVARCHAR(32) NOT NULL,
+    SnapshotDate DATETIME2 NOT NULL
+);
+
+CREATE TABLE dbo.SalesSnapshots
+(
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    StoreId UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Stores(Id),
+    Department NVARCHAR(128) NOT NULL,
+    Sales DECIMAL(18,2) NOT NULL,
+    Target DECIMAL(18,2) NOT NULL,
+    Variance DECIMAL(9,2) NOT NULL,
+    Trend NVARCHAR(16) NOT NULL,
+    Contribution DECIMAL(9,2) NOT NULL,
+    SnapshotDate DATETIME2 NOT NULL
+);
+
+CREATE TABLE dbo.TaskAssignments
+(
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    StoreId UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Stores(Id),
+    Title NVARCHAR(256) NOT NULL,
+    Status NVARCHAR(32) NOT NULL,
+    Priority NVARCHAR(32) NOT NULL,
+    DueDate DATETIME2 NOT NULL,
+    AssignedTo NVARCHAR(128) NULL
+);
+GO
+
+DECLARE @Today DATETIME2 = SYSUTCDATETIME();
+
+INSERT INTO dbo.Regions (Id, Name) VALUES
+    ('06A68525-5F5C-4F6D-A09D-215DC85DBA9E', N'Adriatic'),
+    ('F9CF413C-42E4-4B43-AF71-0F2E12FC41E3', N'Danube'),
+    ('FD1E4B6C-4B79-49A4-9827-1C1B4E5CB22B', N'Balkan North');
+
+INSERT INTO dbo.Stores (Id, Name, Location, RegionId) VALUES
+    ('8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Zagreb City Center', N'Zagreb, Croatia', '06A68525-5F5C-4F6D-A09D-215DC85DBA9E'),
+    ('2E6402F3-2F15-4A5E-9E18-7414B66B6A0E', N'Split Promenade', N'Split, Croatia', '06A68525-5F5C-4F6D-A09D-215DC85DBA9E'),
+    ('8D49323D-3C41-4F38-AE94-EB0E0F91C938', N'Ljubljana Riverside', N'Ljubljana, Slovenia', 'F9CF413C-42E4-4B43-AF71-0F2E12FC41E3'),
+    ('C4C1EBF4-38B8-4E33-BF06-6BB4A21B6D53', N'Vienna Ring', N'Vienna, Austria', 'F9CF413C-42E4-4B43-AF71-0F2E12FC41E3'),
+    ('7B553C7A-C78E-4B57-9E29-85C14F2B739C', N'Budapest Central', N'Budapest, Hungary', 'FD1E4B6C-4B79-49A4-9827-1C1B4E5CB22B');
+
+INSERT INTO dbo.Users (Id, Email, PasswordHash, FullName, Role, RegionId, StoreId) VALUES
+    ('4E24B0F9-ED9B-4B39-8E09-042F9D1F399F', N'admin@retaildash.hr', '5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8', N'Ana Marin', 0, NULL, NULL),
+    ('2BA89255-1B6C-4DD0-A7FB-0D66EAA7E9A0', N'hq@retaildash.hr', '5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8', N'Luka Horvat', 1, NULL, NULL),
+    ('A072F95D-2757-4E7F-AED1-AEC12B940F49', N'region.adriatic@retaildash.hr', '5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8', N'Maja Kovačić', 2, '06A68525-5F5C-4F6D-A09D-215DC85DBA9E', NULL),
+    ('C146D0AA-88A2-4352-9E87-9D48312E9422', N'area.dalmatia@retaildash.hr', '5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8', N'Petar Jukić', 3, NULL, NULL),
+    ('69FB6AE2-7470-4D8C-8C33-4E0B776ACF8E', N'store.zagreb@retaildash.hr', '5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8', N'Iva Šarić', 4, NULL, '8C4B65FB-299B-4A3C-912F-10E483C499CE');
+
+INSERT INTO dbo.UserStoreAssignments (UserId, StoreId) VALUES
+    ('C146D0AA-88A2-4352-9E87-9D48312E9422', '8C4B65FB-299B-4A3C-912F-10E483C499CE'),
+    ('C146D0AA-88A2-4352-9E87-9D48312E9422', '2E6402F3-2F15-4A5E-9E18-7414B66B6A0E');
+
+INSERT INTO dbo.KpiSnapshots (Id, StoreId, Metric, Value, Change, Trend, Status, SnapshotDate) VALUES
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Daily Revenue', 128450, 12.4, N'up', N'good', DATEADD(DAY, -1, @Today)),
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Conversion Rate', 6.4, -0.8, N'down', N'warning', DATEADD(DAY, -1, @Today)),
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Avg Basket Size', 86.2, 4.1, N'up', N'good', DATEADD(DAY, -1, @Today)),
+    (NEWID(), '2E6402F3-2F15-4A5E-9E18-7414B66B6A0E', N'Daily Revenue', 86120, 9.8, N'up', N'good', DATEADD(DAY, -1, @Today)),
+    (NEWID(), '2E6402F3-2F15-4A5E-9E18-7414B66B6A0E', N'Conversion Rate', 4.9, 0.4, N'up', N'warning', DATEADD(DAY, -1, @Today));
+
+INSERT INTO dbo.SalesSnapshots (Id, StoreId, Department, Sales, Target, Variance, Trend, Contribution, SnapshotDate) VALUES
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Apparel', 64000, 59000, 8.5, N'up', 42, DATEADD(DAY, -1, @Today)),
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Home & Living', 22800, 21000, 5.7, N'up', 18, DATEADD(DAY, -1, @Today)),
+    (NEWID(), '2E6402F3-2F15-4A5E-9E18-7414B66B6A0E', N'Apparel', 43800, 45200, -3.1, N'down', 37, DATEADD(DAY, -1, @Today));
+
+INSERT INTO dbo.TaskAssignments (Id, StoreId, Title, Status, Priority, DueDate, AssignedTo) VALUES
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Front window refresh', N'in-progress', N'high', DATEADD(HOUR, 2, @Today), N'Iva Šarić'),
+    (NEWID(), '8C4B65FB-299B-4A3C-912F-10E483C499CE', N'Click & collect staging', N'pending', N'medium', DATEADD(HOUR, 5, @Today), N'Iva Šarić'),
+    (NEWID(), '2E6402F3-2F15-4A5E-9E18-7414B66B6A0E', N'POS hardware updates', N'pending', N'high', DATEADD(HOUR, 6, @Today), N'Petar Jukić');
+GO
+
+PRINT 'RetailTaskDash database ready.';
+GO

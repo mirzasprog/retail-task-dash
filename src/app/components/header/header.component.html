@@ -1,10 +1,9 @@
 <header class="header">
   <div>
-    <h1>Welcome back, {{ userName }} 👋</h1>
-    <p>{{ userRole }} • Monday, 16 October</p>
+    <h1>Pozdrav, {{ userName }}</h1>
+    <p>{{ userRole }} • {{ (today | date:'fullDate') }}</p>
   </div>
   <div class="actions">
-    <button class="outline">Support</button>
-    <button class="primary">New Task</button>
+    <button class="outline" (click)="logout()">Odjava</button>
   </div>
 </header>

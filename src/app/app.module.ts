@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -23,7 +23,12 @@ import { KpiCardComponent } from './components/kpi-card/kpi-card.component';
 import { TrendChartComponent } from './components/trend-chart/trend-chart.component';
 import { TaskListComponent } from './components/task-list/task-list.component';
 import { SalesTableComponent } from './components/sales-table/sales-table.component';
-import { StoreSelectComponent } from './components/store-select/store-select.component';
+import { NotAuthorizedComponent } from './pages/not-authorized/not-authorized.component';
+import { HqDashboardComponent } from './pages/hq-dashboard/hq-dashboard.component';
+import { RegionalDashboardComponent } from './pages/regional-dashboard/regional-dashboard.component';
+import { AreaDashboardComponent } from './pages/area-dashboard/area-dashboard.component';
+import { RegionFilterPipe } from './shared/pipes/region-filter.pipe';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -45,7 +50,11 @@ import { StoreSelectComponent } from './components/store-select/store-select.com
     TrendChartComponent,
     TaskListComponent,
     SalesTableComponent,
-    StoreSelectComponent
+    NotAuthorizedComponent,
+    HqDashboardComponent,
+    RegionalDashboardComponent,
+    AreaDashboardComponent,
+    RegionFilterPipe
   ],
   imports: [
     BrowserModule,
@@ -55,7 +64,13 @@ import { StoreSelectComponent } from './components/store-select/store-select.com
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -1,41 +1,71 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { KpiMetric } from '../../shared/models/kpi.model';
 import { TaskSummary } from '../../shared/models/task.model';
 import { StoreSummary } from '../../shared/models/store.model';
-import { SalesCategoryBreakdown, SalesRecord } from '../../shared/models/sales.model';
+import { SalesRecord } from '../../shared/models/sales.model';
+import { HqOverview } from '../../shared/models/reporting.model';
+import { Region } from '../../shared/models/region.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ApiService {
   constructor(private readonly http: HttpClient) {}
 
-  getStores(): Observable<StoreSummary[]> {
-    return this.http.get<StoreSummary[]>(`${environment.apiUrl}/stores`);
+  getStores(filters?: { regionId?: string; userId?: string }): Observable<StoreSummary[]> {
+    let params = new HttpParams();
+    if (filters?.regionId) {
+      params = params.set('regionId', filters.regionId);
+    }
+    if (filters?.userId) {
+      params = params.set('userId', filters.userId);
+    }
+    return this.http.get<StoreSummary[]>(`${environment.apiUrl}/stores`, { params });
   }
 
-  getDashboardKpis(storeId: string): Observable<KpiMetric[]> {
-    return this.http.get<KpiMetric[]>(`${environment.apiUrl}/stores/${storeId}/kpis`);
+  getStoreDashboard(storeId: string): Observable<{ kpis: KpiMetric[]; sales: SalesRecord[]; tasks: TaskSummary[] }> {
+    return this.http.get<{ kpis: KpiMetric[]; sales: SalesRecord[]; tasks: TaskSummary[] }>(
+      `${environment.apiUrl}/dashboard/store/${storeId}`
+    );
   }
 
-  getTodayTasks(storeId: string): Observable<TaskSummary[]> {
-    return this.http.get<TaskSummary[]>(`${environment.apiUrl}/stores/${storeId}/tasks/today`);
+  getStoreTasks(storeId: string): Observable<TaskSummary[]> {
+    return this.http.get<TaskSummary[]>(`${environment.apiUrl}/dashboard/store/${storeId}/tasks`);
   }
 
-  getAllTasks(storeId: string): Observable<TaskSummary[]> {
-    return this.http.get<TaskSummary[]>(`${environment.apiUrl}/stores/${storeId}/tasks`);
+  getRegionKpis(regionId: string): Observable<KpiMetric[]> {
+    return this.http.get<KpiMetric[]>(`${environment.apiUrl}/dashboard/region/${regionId}/kpis`);
   }
 
-  getSalesHistory(storeId: string): Observable<SalesRecord[]> {
-    return this.http.get<SalesRecord[]>(`${environment.apiUrl}/stores/${storeId}/sales/history`);
+  getRegionSales(regionId: string): Observable<SalesRecord[]> {
+    return this.http.get<SalesRecord[]>(`${environment.apiUrl}/dashboard/region/${regionId}/sales`);
   }
 
-  getCategoryBreakdown(storeId: string): Observable<SalesCategoryBreakdown[]> {
-    return this.http.get<SalesCategoryBreakdown[]>(`${environment.apiUrl}/stores/${storeId}/sales/categories`);
+  getHqOverview(startDate?: string, endDate?: string): Observable<HqOverview> {
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', startDate);
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate);
+    }
+    return this.http.get<HqOverview>(`${environment.apiUrl}/reports/hq/overview`, { params });
+  }
+
+  exportHqOverview(startDate?: string, endDate?: string): Observable<Blob> {
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', startDate);
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate);
+    }
+    return this.http.get(`${environment.apiUrl}/reports/hq/export`, { params, responseType: 'blob' });
+  }
+
+  getRegions(): Observable<Region[]> {
+    return this.http.get<Region[]>(`${environment.apiUrl}/regions`);
   }
 }

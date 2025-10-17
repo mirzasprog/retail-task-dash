@@ -31,9 +31,23 @@ The backend source is under `backend/RetailTaskDash.Api`. It is an ASP.NET 6 min
 
 The Angular app expects the API at `http://localhost:5000/api`. Adjust `src/environments` as needed.
 
+### Authentication & roles
+
+The sample database ships with the following test accounts (password for all accounts is `password`):
+
+| Email | Role |
+| --- | --- |
+| `admin@retaildash.hr` | Admin |
+| `hq@retaildash.hr` | Headquarters |
+| `region.adriatic@retaildash.hr` | RegionalDirector (Adriatic) |
+| `area.dalmatia@retaildash.hr` | AreaManager (Dalmatia stores) |
+| `store.zagreb@retaildash.hr` | StoreManager (Zagreb) |
+
 ## Database
 
 Supabase has been removed. The backend now uses SQL Server (or Azure SQL) via Entity Framework Core. Configure the connection string in `appsettings.Development.json`.
+
+A ready-to-run SQL Server script containing the complete schema and sample data is located at `backend/Database/RetailTaskDash.sql`. Import it with SQL Server Management Studio (or sqlcmd) to provision the database locally. The legacy `seed.sql` simply includes this script for convenience.
 
 ## Testing
 
