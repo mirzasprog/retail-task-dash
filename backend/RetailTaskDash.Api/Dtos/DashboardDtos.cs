@@ -45,13 +45,13 @@ public class RegionSummaryDto
 
 public class DashboardSummaryDto
 {
-    public required IEnumerable<KpiDto> Kpis { get; init; }
-    public required IEnumerable<SalesRecordDto> Sales { get; init; }
-    public required IEnumerable<TaskAssignment> Tasks { get; init; }
+    public IEnumerable<KpiDto> Kpis { get; init; } = Array.Empty<KpiDto>();
+    public IEnumerable<SalesRecordDto> Sales { get; init; } = Array.Empty<SalesRecordDto>();
+    public IEnumerable<TaskAssignment> Tasks { get; init; } = Array.Empty<TaskAssignment>();
 }
 
 public class HqOverviewDto
 {
-    public required IEnumerable<RegionSummaryDto> Regions { get; init; }
-    public required IEnumerable<StoreSummaryDto> Stores { get; init; }
+    public IEnumerable<RegionSummaryDto> Regions { get; init; } = Array.Empty<RegionSummaryDto>();
+    public IEnumerable<StoreSummaryDto> Stores { get; init; } = Array.Empty<StoreSummaryDto>();
 }
