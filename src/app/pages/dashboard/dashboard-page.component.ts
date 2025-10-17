@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
-import { DashboardDataService } from '../../core/services/dashboard-data.service';
-import { StoreSummary } from '../../shared/models/store.model';
+import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { KpiMetric } from '../../shared/models/kpi.model';
 import { TaskSummary } from '../../shared/models/task.model';
-import { SalesCategoryBreakdown, SalesRecord } from '../../shared/models/sales.model';
+import { SalesRecord } from '../../shared/models/sales.model';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -14,48 +14,27 @@ import { SalesCategoryBreakdown, SalesRecord } from '../../shared/models/sales.m
   styleUrls: ['./dashboard-page.component.scss']
 })
 export class DashboardPageComponent implements OnInit {
-  stores: StoreSummary[] = [];
-  selectedStoreId: string | null = null;
+  storeName = '';
+  kpis$!: Observable<KpiMetric[]>;
+  tasks$!: Observable<TaskSummary[]>;
+  sales$!: Observable<SalesRecord[]>;
 
-  kpis$: Observable<KpiMetric[]> | undefined;
-  todayTasks$: Observable<TaskSummary[]> | undefined;
-  sales$: Observable<SalesRecord[]> | undefined;
-  categories$: Observable<SalesCategoryBreakdown[]> | undefined;
-
-  loading = true;
-
-  constructor(private readonly dashboardData: DashboardDataService) {}
+  constructor(private readonly api: ApiService, private readonly auth: AuthService) {}
 
   ngOnInit(): void {
-    this.dashboardData.getStores()
-      .pipe(
-        tap(stores => {
-          this.stores = stores;
-          if (!this.selectedStoreId && stores.length) {
-            this.selectedStoreId = stores[0].id;
-            this.setupStreams();
-          }
-        })
-      )
-      .subscribe(() => {
-        this.loading = false;
-      });
-  }
-
-  onStoreChange(storeId: string): void {
-    this.selectedStoreId = storeId;
-    this.setupStreams();
-  }
-
-  private setupStreams(): void {
-    if (!this.selectedStoreId) {
+    const storeId = this.auth.currentUser?.storeId ?? this.auth.currentUser?.stores[0];
+    if (!storeId) {
       return;
     }
 
-    const storeId = this.selectedStoreId;
-    this.kpis$ = this.dashboardData.getKpis(storeId);
-    this.todayTasks$ = this.dashboardData.getTodayTasks(storeId);
-    this.sales$ = this.dashboardData.getSalesHistory(storeId);
-    this.categories$ = this.dashboardData.getCategoryBreakdown(storeId);
+    this.api.getStores({ userId: this.auth.currentUser?.id ?? undefined }).subscribe(stores => {
+      const store = stores.find(s => s.id === storeId);
+      this.storeName = store?.name ?? 'Dodijeljeni dućan';
+    });
+
+    const dashboard$ = this.api.getStoreDashboard(storeId).pipe(shareReplay(1));
+    this.kpis$ = dashboard$.pipe(map(response => response.kpis));
+    this.sales$ = dashboard$.pipe(map(response => response.sales));
+    this.tasks$ = dashboard$.pipe(map(response => response.tasks));
   }
 }

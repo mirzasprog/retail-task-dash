@@ -1,21 +1,8 @@
 .kpi {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.kpi__icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 1rem;
-  display: grid;
-  place-items: center;
-  background: rgba(99, 102, 241, 0.22);
-  color: #a5b4fc;
-}
-
-.kpi__icon .material-icons {
-  font-size: 1.75rem;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.5rem;
 }
 
 .label {

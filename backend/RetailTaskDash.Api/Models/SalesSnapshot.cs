@@ -10,4 +10,5 @@ public class SalesSnapshot
     public decimal Variance { get; set; }
     public string Trend { get; set; } = "up";
     public decimal Contribution { get; set; }
+    public DateTime SnapshotDate { get; set; }
 }

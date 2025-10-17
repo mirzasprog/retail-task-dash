@@ -1,0 +1,89 @@
+<section class="regional-dashboard">
+  <header>
+    <h1>Regionalni pregled</h1>
+    <div class="store-select" *ngIf="stores.length">
+      <label for="store">Dućan</label>
+      <select id="store" [value]="selectedStoreId" (change)="onStoreChange($event.target.value)">
+        <option *ngFor="let store of stores" [value]="store.id">{{ store.name }}</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="kpis" *ngIf="regionKpis$ | async as regionKpis">
+      <h2>Regija - KPI</h2>
+      <ul>
+        <li *ngFor="let kpi of regionKpis">
+          <h3>{{ kpi.metric }}</h3>
+          <p class="value">{{ kpi.value | number:'1.0-0' }}</p>
+          <p [class.positive]="kpi.change >= 0" [class.negative]="kpi.change < 0">
+            {{ kpi.change | number:'1.1-1' }}%
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="sales" *ngIf="regionSales$ | async as regionSales">
+      <h2>Regija - prodaja</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Odjel</th>
+            <th>Prodaja</th>
+            <th>Target</th>
+            <th>Varijanca</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of regionSales">
+            <td>{{ record.department }}</td>
+            <td>{{ record.sales | number:'1.0-0' }}</td>
+            <td>{{ record.target | number:'1.0-0' }}</td>
+            <td [class.positive]="record.variance >= 0" [class.negative]="record.variance < 0">
+              {{ record.variance | number:'1.1-1' }}%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div class="grid" *ngIf="storeKpis$ | async as storeKpis">
+    <section class="kpis">
+      <h2>Dućan - KPI</h2>
+      <ul>
+        <li *ngFor="let kpi of storeKpis">
+          <h3>{{ kpi.metric }}</h3>
+          <p class="value">{{ kpi.value | number:'1.0-0' }}</p>
+          <p [class.positive]="kpi.change >= 0" [class.negative]="kpi.change < 0">
+            {{ kpi.change | number:'1.1-1' }}%
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="sales" *ngIf="storeSales$ | async as storeSales">
+      <h2>Dućan - prodaja</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Odjel</th>
+            <th>Prodaja</th>
+            <th>Target</th>
+            <th>Varijanca</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of storeSales">
+            <td>{{ record.department }}</td>
+            <td>{{ record.sales | number:'1.0-0' }}</td>
+            <td>{{ record.target | number:'1.0-0' }}</td>
+            <td [class.positive]="record.variance >= 0" [class.negative]="record.variance < 0">
+              {{ record.variance | number:'1.1-1' }}%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</section>

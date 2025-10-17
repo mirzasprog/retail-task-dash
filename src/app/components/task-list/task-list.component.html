@@ -10,7 +10,7 @@
         <div class="task__title">{{ task.title }}</div>
         <div class="task__meta">
           <span class="material-icons">schedule</span>
-          {{ task.dueDate }}
+          {{ task.dueDate | date:'shortTime' }}
         </div>
       </div>
       <div class="badge" [ngClass]="{

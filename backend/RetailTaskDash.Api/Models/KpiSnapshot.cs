@@ -9,4 +9,5 @@ public class KpiSnapshot
     public decimal Change { get; set; }
     public string Trend { get; set; } = "up";
     public string Status { get; set; } = "good";
+    public DateTime SnapshotDate { get; set; }
 }

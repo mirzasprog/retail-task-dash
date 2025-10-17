@@ -1,0 +1,53 @@
+<section class="area-dashboard">
+  <header>
+    <h1>Područni pregled</h1>
+    <div class="store-select" *ngIf="stores.length">
+      <label for="area-store">Dućan</label>
+      <select id="area-store" [value]="selectedStoreId" (change)="onStoreChange($event.target.value)">
+        <option *ngFor="let store of stores" [value]="store.id">{{ store.name }}</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="grid" *ngIf="kpis$ | async as kpis; else loading">
+    <section class="kpis">
+      <h2>KPI</h2>
+      <div class="cards">
+        <article *ngFor="let kpi of kpis">
+          <h3>{{ kpi.metric }}</h3>
+          <p>{{ kpi.value | number:'1.0-0' }}</p>
+          <small [class.positive]="kpi.change >= 0" [class.negative]="kpi.change < 0">
+            {{ kpi.change | number:'1.1-1' }}%
+          </small>
+        </article>
+      </div>
+    </section>
+
+    <section class="sales" *ngIf="sales$ | async as sales">
+      <h2>Prodaja</h2>
+      <ul>
+        <li *ngFor="let record of sales">
+          <span>{{ record.department }}</span>
+          <span>{{ record.sales | number:'1.0-0' }} / {{ record.target | number:'1.0-0' }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="tasks" *ngIf="tasks$ | async as tasks">
+      <h2>Taskovi</h2>
+      <ul>
+        <li *ngFor="let task of tasks">
+          <div>
+            <strong>{{ task.title }}</strong>
+            <small>{{ task.dueDate | date:'short' }}</small>
+          </div>
+          <span class="status">{{ task.status }}</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <ng-template #loading>
+    <p>Učitavanje podataka...</p>
+  </ng-template>
+</section>
