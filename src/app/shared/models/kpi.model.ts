@@ -1,8 +1,9 @@
 export interface KpiMetric {
   id: string;
-  metric: string;
-  value: number;
+  title: string;
+  value: string;
   change: number;
   trend: 'up' | 'down';
   status: 'good' | 'warning' | 'critical';
+  icon: string;
 }
