@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.SpaServices.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -101,9 +102,7 @@ app.UseSpa(spa =>
 
     if (app.Environment.IsDevelopment())
     {
-        var spaSourcePath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", ".."));
-        spa.Options.SourcePath = spaSourcePath;
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+        spa.UseAngularCliServer(npmScript: "start");
     }
     else
     {
