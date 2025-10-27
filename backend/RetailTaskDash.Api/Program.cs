@@ -15,36 +15,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-static string CombineSegments(string first, params string[] additional)
+var spaStaticFilesPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "retail-task-dash");
+
+if (!Directory.Exists(spaStaticFilesPath))
 {
-    var parts = new string[additional.Length + 1];
-    parts[0] = first;
-    Array.Copy(additional, 0, parts, 1, additional.Length);
-    return Path.Combine(parts);
+    spaStaticFilesPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "dist", "retail-task-dash"));
 }
-
-string ResolveSpaStaticFilesPath(WebApplicationBuilder webBuilder)
-{
-    const string DistFolder = "dist";
-    const string AppFolder = "retail-task-dash";
-
-    var publishedPath = CombineSegments(webBuilder.Environment.ContentRootPath, DistFolder, AppFolder);
-    if (Directory.Exists(publishedPath))
-    {
-        return publishedPath;
-    }
-
-    var solutionRoot = Path.GetFullPath(CombineSegments(webBuilder.Environment.ContentRootPath, "..", ".."));
-    var solutionPath = CombineSegments(solutionRoot, DistFolder, AppFolder);
-    if (Directory.Exists(solutionPath))
-    {
-        return solutionPath;
-    }
-
-    return publishedPath;
-}
-
-var spaStaticFilesPath = ResolveSpaStaticFilesPath(builder);
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
@@ -120,6 +96,8 @@ app.UseSpa(spa =>
 
     if (app.Environment.IsDevelopment())
     {
+        var spaSourcePath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", ".."));
+        spa.Options.SourcePath = spaSourcePath;
         spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
     }
     else
