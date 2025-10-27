@@ -6,6 +6,11 @@ import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { LoginRequest, LoginResponse, UserProfile, UserRole } from '../../shared/models/user.model';
 
+type RawUserProfile = Omit<UserProfile, 'role' | 'stores'> & {
+  role: UserRole | number;
+  stores?: unknown;
+};
+
 const TOKEN_KEY = 'retail-task-dash-token';
 const USER_KEY = 'retail-task-dash-user';
 
@@ -13,15 +18,23 @@ const USER_KEY = 'retail-task-dash-user';
 export class AuthService {
   private readonly currentUserSubject = new BehaviorSubject<UserProfile | null>(this.loadUser());
   readonly currentUser$ = this.currentUserSubject.asObservable();
+  private readonly numericRoleMap: Record<number, UserRole> = {
+    0: UserRole.Admin,
+    1: UserRole.Headquarters,
+    2: UserRole.RegionalDirector,
+    3: UserRole.AreaManager,
+    4: UserRole.StoreManager
+  };
 
   constructor(private readonly http: HttpClient) {}
 
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, request).pipe(
       tap(response => {
+        const normalizedUser = this.normalizeUserProfile(response.user as RawUserProfile);
         localStorage.setItem(TOKEN_KEY, response.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(response.user));
-        this.currentUserSubject.next(response.user);
+        localStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
+        this.currentUserSubject.next(normalizedUser);
       })
     );
   }
@@ -80,7 +93,7 @@ export class AuthService {
     }
 
     try {
-      return JSON.parse(serialized) as UserProfile;
+      return this.normalizeUserProfile(JSON.parse(serialized) as RawUserProfile);
     } catch {
       this.clearStoredCredentials();
       return null;
@@ -106,6 +119,31 @@ export class AuthService {
   private clearStoredCredentials(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+  }
+
+  private normalizeUserProfile(user: RawUserProfile): UserProfile {
+    const normalizedRole = this.normalizeRole(user.role);
+    const stores = Array.isArray(user.stores)
+      ? (user.stores as unknown[]).map(store => String(store))
+      : [];
+
+    return {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: normalizedRole,
+      regionId: user.regionId ?? null,
+      storeId: user.storeId ?? null,
+      stores
+    };
+  }
+
+  private normalizeRole(role: UserRole | number): UserRole {
+    if (typeof role !== 'number') {
+      return role;
+    }
+
+    return this.numericRoleMap[role] ?? UserRole.StoreManager;
   }
 
   private isTokenValid(token: string | null): boolean {
