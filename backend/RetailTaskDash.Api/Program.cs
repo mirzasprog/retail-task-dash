@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SpaProxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RetailTaskDash.Api.Configuration;
@@ -8,9 +9,14 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "../../dist/retail-task-dash";
+});
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
@@ -62,14 +68,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-if (!app.Environment.IsDevelopment())
+else
 {
     app.UseHttpsRedirection();
+    app.UseSpaStaticFiles();
 }
+
+app.UseStaticFiles();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapToSpaProxy("{*path}", new SpaProxyOptions
+    {
+        SourcePath = "../../",
+        DevServerPort = 4200,
+        LaunchCommand = "npm start",
+        WorkingDirectory = "../../"
+    });
+}
+else
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
