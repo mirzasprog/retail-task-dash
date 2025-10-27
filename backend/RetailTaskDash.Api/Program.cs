@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SpaProxy;
+using Microsoft.AspNetCore.SpaServices.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RetailTaskDash.Api.Configuration;
@@ -82,12 +82,10 @@ app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapToSpaProxy("{*path}", new SpaProxyOptions
+    app.UseSpa(spa =>
     {
-        SourcePath = "../../",
-        DevServerPort = 4200,
-        LaunchCommand = "npm start",
-        WorkingDirectory = "../../"
+        spa.Options.SourcePath = "../../";
+        spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
     });
 }
 else
