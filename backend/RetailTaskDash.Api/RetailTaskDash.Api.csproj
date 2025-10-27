@@ -3,7 +3,28 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <SpaRoot>..\..\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="$(SpaRoot)dist\**" />
+    <None Remove="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(SpaRoot)dist\**" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
+  <Target Name="EnsureNodeModules" BeforeTargets="Build">
+    <Message Importance="high" Text="Restoring front-end dependencies" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" Condition="Exists('$(SpaRoot)package.json') AND !Exists('$(SpaRoot)node_modules')" />
+  </Target>
+
+  <Target Name="BuildSpa" DependsOnTargets="EnsureNodeModules" BeforeTargets="Build">
+    <Message Importance="high" Text="Building Angular application" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" Condition="Exists('$(SpaRoot)package.json')" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
