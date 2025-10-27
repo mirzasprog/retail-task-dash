@@ -27,20 +27,33 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    this.clearStoredCredentials();
     this.currentUserSubject.next(null);
   }
 
   get token(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!this.isTokenValid(token)) {
+      this.logout();
+      return null;
+    }
+
+    return token;
   }
 
   get currentUser(): UserProfile | null {
+    if (!this.ensureValidSession()) {
+      return null;
+    }
+
     return this.currentUserSubject.value;
   }
 
   hasRole(...roles: UserRole[]): boolean {
+    if (!this.ensureValidSession()) {
+      return false;
+    }
+
     const user = this.currentUserSubject.value;
     if (!user) {
       return false;
@@ -49,16 +62,86 @@ export class AuthService {
     return roles.includes(user.role);
   }
 
+  isAuthenticated(): boolean {
+    return this.ensureValidSession() && !!this.currentUserSubject.value;
+  }
+
   private loadUser(): UserProfile | null {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!this.isTokenValid(token)) {
+      this.clearStoredCredentials();
+      return null;
+    }
+
     const serialized = localStorage.getItem(USER_KEY);
     if (!serialized) {
+      this.clearStoredCredentials();
       return null;
     }
 
     try {
       return JSON.parse(serialized) as UserProfile;
     } catch {
+      this.clearStoredCredentials();
       return null;
     }
+  }
+
+  private ensureValidSession(): boolean {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!this.isTokenValid(token)) {
+      this.logout();
+      return false;
+    }
+
+    if (!this.currentUserSubject.value) {
+      const user = this.loadUser();
+      this.currentUserSubject.next(user);
+      return !!user;
+    }
+
+    return true;
+  }
+
+  private clearStoredCredentials(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+
+  private isTokenValid(token: string | null): boolean {
+    if (!token) {
+      return false;
+    }
+
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return false;
+    }
+
+    try {
+      const payload = JSON.parse(atob(this.toBase64(parts[1]))) as Record<string, unknown> | null;
+      if (!payload || typeof payload !== 'object') {
+        return false;
+      }
+
+      const exp = payload['exp'];
+      if (typeof exp !== 'number') {
+        return true;
+      }
+
+      const expiry = exp * 1000;
+      return Date.now() < expiry;
+    } catch {
+      return false;
+    }
+  }
+
+  private toBase64(base64Url: string): string {
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const padding = base64.length % 4;
+    if (padding > 0) {
+      base64 = base64.padEnd(base64.length + (4 - padding), '=');
+    }
+    return base64;
   }
 }

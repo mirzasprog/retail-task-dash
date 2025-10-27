@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
   constructor(private readonly auth: AuthService, private readonly router: Router) {}
 
   canActivate(): boolean | UrlTree {
-    if (this.auth.currentUser) {
+    if (this.auth.isAuthenticated()) {
       return true;
     }
 
