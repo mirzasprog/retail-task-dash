@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using RetailTaskDash.Api.Configuration;
 using RetailTaskDash.Api.Data;
 using RetailTaskDash.Api.Extensions;
+using System.IO;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,9 +14,16 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var spaStaticFilesPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "retail-task-dash");
+
+if (!Directory.Exists(spaStaticFilesPath))
+{
+    spaStaticFilesPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "dist", "retail-task-dash"));
+}
+
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "../../dist/retail-task-dash";
+    configuration.RootPath = spaStaticFilesPath;
 });
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
@@ -84,7 +92,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSpa(spa =>
     {
-        spa.Options.SourcePath = "../../";
+        var spaSourcePath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", ".."));
+        spa.Options.SourcePath = spaSourcePath;
         spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
     });
 }

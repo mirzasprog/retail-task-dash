@@ -3,17 +3,17 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SpaRoot>..\..\</SpaRoot>
-    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <SpaRoot>../../</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="$(SpaRoot)dist\**" />
-    <None Remove="$(SpaRoot)node_modules\**" />
+    <None Remove="$(SpaRoot)dist/**" />
+    <None Remove="$(SpaRoot)node_modules/**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="$(SpaRoot)dist\**" CopyToPublishDirectory="Always" />
+    <Content Include="$(SpaRoot)dist/**" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
   <Target Name="EnsureNodeModules" BeforeTargets="Build">
