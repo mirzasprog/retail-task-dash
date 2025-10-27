@@ -7,11 +7,16 @@ using RetailTaskDash.Api.Data;
 using RetailTaskDash.Api.Extensions;
 using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
