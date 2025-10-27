@@ -7,6 +7,7 @@ using RetailTaskDash.Api.Data;
 using RetailTaskDash.Api.Extensions;
 using System.IO;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,18 +89,24 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-if (app.Environment.IsDevelopment())
+app.UseSpa(spa =>
 {
-    app.UseSpa(spa =>
+    var spaSourcePath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", ".."));
+    spa.Options.SourcePath = spaSourcePath;
+
+    if (app.Environment.IsDevelopment())
     {
         var spaSourcePath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", ".."));
         spa.Options.SourcePath = spaSourcePath;
         spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
-    });
-}
-else
-{
-    app.MapFallbackToFile("index.html");
-}
+    }
+    else
+    {
+        spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(spaStaticFilesPath)
+        };
+    }
+});
 
 app.Run();
